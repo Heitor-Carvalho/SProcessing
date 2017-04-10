@@ -1,25 +1,21 @@
-clear all 
-close all
+clear all;
+close all;
+
+addpath('../ExampleRafael/')
+addpath('../ThirdParty/SeismicLab/codes/radon_transforms/')
+addpath('../ThirdParty/SeismicLab/codes/decon/')
 
 % Open and read files of synthetic primaries and multiples
-%addpath('/data/home_local/rferrari/Dropbox/Convenio_4573/Pesquisa/Multiplas/Data_Rafael_Daniela/');
-%addpath('/data/home_local/rferrari/Dropbox/Convenio_4573/Pesquisa/Multiplas/Dados/');
-
-%prim = loadsegy('cmp_primarias_conv.segy');
-%mult = loadsegy('cmp_multiplas_conv.segy');
-
-%prim = loadsegy('cmp_primarias_conv_1_evento_sem_div.segy');
-%mult = loadsegy('cmp_multiplas_conv_1_evento_sem_div.segy');
 prim = loadsegy('primarias_5m.segy');
 mult = loadsegy('multiplas_5m_div.segy');
 
 data_prim = double(prim.tr_data); 
 data_mult = double(mult.tr_data);
 
-dt = 0.004;    % temporal sampling in seconds 
-dx = 5;       % spatial sampling in meters
+dt = 0.004;                           % temporal sampling in seconds 
+dx = 5;                               % spatial sampling in meters
+
 [Nsample,NRic] = size(data_mult);
-%NRic = 141; 
 time = (0:dt:dt*(Nsample-1));
 h = [0:dx:(NRic-1)*dx];
 
@@ -35,20 +31,8 @@ data_box(:,end-ll:end) = ones(size(data_box,1),1)*(wind(end-ll:end).');
 
 data_prim_smooth = data_prim.*data_box; 
 data_mult_smooth = data_mult.*data_box;
-
 %figure; plotseis(data_prim_smooth,time,h,1,[5 max(abs(data_prim(:)))],1,1,'k');
 %figure; plotseis(data_mult_smooth,time,h,1,[5 max(abs(data_prim(:)))],1,1,'k');
-
-% Compute the Fourier transform of the data
-% fnyq = 1/2/dt;
-% freq_axis = linspace(-fnyq,fnyq,Nsample);
-% for ik = 1:NRic
-%     data_prim_freq(:,ik) = fftshift(fft(data_prim(:,ik))); 
-%     data_mult_freq(:,ik) = fftshift(fft(data_mult(:,ik))); 
-% end
-% 
-% figure; imagesc(h, freq_axis, abs(data_prim_freq))
-% figure; imagesc(h, freq_axis, abs(data_mult_freq))
 
 % Compute the tau-p transform of the dataset using the code of Sacchi
 % q = (0:10^(-6):10^(-3));
@@ -64,11 +48,9 @@ fhigh = 80;
 mu = .010;
 sol = 'ls';
 
-% radon_prim = inverse_radon_freq(data_prim,dt,h,q,N,flow,fhigh,mu,sol);
-tic
+radon_prim = inverse_radon_freq(data_prim,dt,h,q,N,flow,fhigh,mu,sol);
 radon_mult = inverse_radon_freq(data_mult,dt,h,q,N,flow,fhigh,mu,sol);
 radon_mult_fo150 = inverse_radon_freq(data_mult(:,31:end),dt,h_fo150,q_fo150,N,flow,fhigh,mu,sol);
-toc
 
 % figure; imagesc(q, time, radon_prim); caxis([-0.003, 0.003]);
 figure; imagesc(q, time, radon_mult); caxis([-1e-5, 1e-5]);
@@ -118,21 +100,31 @@ acor_fo150 = acor_fo150(((length(acor_fo150)-1)/2)+1:end);
 
 [filtro_fo150,dec_res_fo150] = predictive(radon_mult_fo150(:,pn),predictorLength,predictionLag,0.1);
 % figure,plot(0:dt:dt*(Nsample-1),dec_res_fo150);
-
+%%
 Tsamples = 626;
 % Influencia da ausencia dos afastamentos iniciais
-figure,subplot(2,2,1),plot(0:dt:dt*(Tsamples-1),radon_mult(1:Tsamples,pn),'k','LineWidth',2)
+figure,subplot(2,2,1),plot(radon_mult(1:Tsamples,pn),'k','LineWidth',2)
 xlabel('Tau (s)')
-title('Traço no dominio transformado (afastamento inicial de 0m)','FontSize',14,'FontWeight','bold')
+<<<<<<< HEAD
+title('Traï¿½o no dominio transformado ','FontSize',14,'FontWeight','bold')
+subplot(2,2,3),plot(dec_res(1:Tsamples),'k','LineWidth',2)
+=======
+title('Traï¿½o no dominio transformado (afastamento inicial de 0m)','FontSize',14,'FontWeight','bold')
 subplot(2,2,3),plot(0:dt:dt*(Tsamples-1),dec_res(1:Tsamples),'k','LineWidth',2)
+>>>>>>> 91b9709b4c4bea1c40896f9147e90514000cc416
 xlabel('Tau (s)')
-title('Resultado da filtragem preditiva (afastamento inicial de 0m)','FontSize',14,'FontWeight','bold')
-subplot(2,2,2),plot(0:dt:dt*(Tsamples-1),radon_mult_fo150(1:Tsamples,pn),'k','LineWidth',2)
+title('Resultado da filtragem preditiva ','FontSize',14,'FontWeight','bold')
+subplot(2,2,2),plot(radon_mult_fo150(1:Tsamples,pn),'k','LineWidth',2)
 xlabel('Tau (s)')
-title('Traço no dominio transformado (afastamento inicial de 150m)','FontSize',14,'FontWeight','bold')
+<<<<<<< HEAD
+title('Traï¿½o no dominio transformado ','FontSize',14,'FontWeight','bold')
+subplot(2,2,4),plot(dec_res_fo150(1:Tsamples),'k','LineWidth',2)
+=======
+title('Traï¿½o no dominio transformado (afastamento inicial de 150m)','FontSize',14,'FontWeight','bold')
 subplot(2,2,4),plot(0:dt:dt*(Tsamples-1),dec_res_fo150(1:Tsamples),'k','LineWidth',2)
+>>>>>>> 91b9709b4c4bea1c40896f9147e90514000cc416
 xlabel('Tau (s)')
-title('Resultado da filtragem preditiva (afastamento inicial de 150m)','FontSize',14,'FontWeight','bold')
+title('Resultado da filtragem preditiva ','FontSize',14,'FontWeight','bold')
 
 %hold on,plot(radon_mult_v2(:,10)/max(radon_mult_v2(:,10)),'k')
 %figure,plot(radon_mult(:,1)/max(radon_mult(:,1)))
