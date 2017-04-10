@@ -100,29 +100,21 @@ acor_fo150 = acor_fo150(((length(acor_fo150)-1)/2)+1:end);
 
 [filtro_fo150,dec_res_fo150] = predictive(radon_mult_fo150(:,pn),predictorLength,predictionLag,0.1);
 % figure,plot(0:dt:dt*(Nsample-1),dec_res_fo150);
-%%
+
 Tsamples = 626;
 % Influencia da ausencia dos afastamentos iniciais
 figure,subplot(2,2,1),plot(radon_mult(1:Tsamples,pn),'k','LineWidth',2)
 xlabel('Tau (s)')
-<<<<<<< HEAD
 title('Tra�o no dominio transformado ','FontSize',14,'FontWeight','bold')
 subplot(2,2,3),plot(dec_res(1:Tsamples),'k','LineWidth',2)
-=======
 title('Tra�o no dominio transformado (afastamento inicial de 0m)','FontSize',14,'FontWeight','bold')
-subplot(2,2,3),plot(0:dt:dt*(Tsamples-1),dec_res(1:Tsamples),'k','LineWidth',2)
->>>>>>> 91b9709b4c4bea1c40896f9147e90514000cc416
 xlabel('Tau (s)')
 title('Resultado da filtragem preditiva ','FontSize',14,'FontWeight','bold')
 subplot(2,2,2),plot(radon_mult_fo150(1:Tsamples,pn),'k','LineWidth',2)
 xlabel('Tau (s)')
-<<<<<<< HEAD
 title('Tra�o no dominio transformado ','FontSize',14,'FontWeight','bold')
 subplot(2,2,4),plot(dec_res_fo150(1:Tsamples),'k','LineWidth',2)
-=======
 title('Tra�o no dominio transformado (afastamento inicial de 150m)','FontSize',14,'FontWeight','bold')
-subplot(2,2,4),plot(0:dt:dt*(Tsamples-1),dec_res_fo150(1:Tsamples),'k','LineWidth',2)
->>>>>>> 91b9709b4c4bea1c40896f9147e90514000cc416
 xlabel('Tau (s)')
 title('Resultado da filtragem preditiva ','FontSize',14,'FontWeight','bold')
 
