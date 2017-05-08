@@ -103,7 +103,6 @@ radon_prim_offset150m = inverse_radon_freq(dado_p_div(:, 31:end),dt,h_fo150,q,ra
 radon_mult = inverse_radon_freq(dado_div,dt,h,q,radon_type,flow,fhigh,mu,sol);
 radon_mult_offset150m = inverse_radon_freq(dado_div(:, 31:end),dt,h_fo150,q,radon_type,flow,fhigh,mu,sol);
 
-keyboard
 % Traço com  duas primarias e miltipla - Radon Domain
 for i = 1:length(primary_shift)
   radon_mult_prim(:, :, i) = inverse_radon_freq(dado_div_two_primaries(:, :, i),dt,h,q,radon_type,flow,fhigh,mu,sol);
