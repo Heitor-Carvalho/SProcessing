@@ -2,7 +2,7 @@ addpath('../../IA353/ExtremeLearningMachine/')
 addpath('../../IA353/NeuralNetwork/')
 
 % Loading traces matrix in Radon domain
-data_set_name = '../SyntheticTrace/trace_example_radon_domain';
+data_set_name = './DataSets/tracos_radon';
 load(data_set_name)
 
 debug_mode = 0; 
@@ -19,11 +19,11 @@ debug_mode = 0;
 
 % Trace pre-processing
 trace_nb = 22;
-attenuation_factor = 0.2;
+attenuation_factor = 1;
 samples_start = 19;
 
 % Removing firt zeros samples and nomalizing data
-trace_norm = trace_pre_processing(radon_mult_fo150, trace_nb, samples_start, attenuation_factor);
+trace_norm = trace_pre_processing(radon_mult_offset150m, trace_nb, samples_start, attenuation_factor);
 
 % Trace autocorrlation
 if(debug_mode)
@@ -33,10 +33,10 @@ if(debug_mode)
   grid
 end
 
-sample_to_predict = 38;
-filter_len = [1 2 4 6 8 10 12 14 16 18];
-mid_layer_sz = 1:2:90;
-regularization = 0;
+sample_to_predict = 33;
+filter_len = [10 12 14 16 18];
+mid_layer_sz = 1:2:80;
+regularization = 1e-4;
 
 predicted_trace = zeros(length(trace_norm)-sample_to_predict+1, length(mid_layer_sz), length(filter_len));
 mse = zeros(1, length(mid_layer_sz), length(filter_len));
@@ -51,7 +51,8 @@ for i = 1:length(filter_len)
     out_sz = 1;
     nn.func = @tanh;
     nn.b = 0;
-    nn.v = 1*rand(in_sz+1, mid_layer_sz(j));
+
+    nn.v = 0.5*rand(in_sz+1, mid_layer_sz(j));
     nn = neuro_net_init(nn);
 
     % Preparing data based in parameters
