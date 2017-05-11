@@ -5,7 +5,7 @@ ref_data_set_name = './DataSets/tracos_radon';
 load(ref_data_set_name)
 
 trace_predicted = 22;
-sample_predicted = 33;
+sample_predicted = 25;
 data_set_name = sprintf('trace_%d_predict_sample_%d', trace_predicted, sample_predicted);
 load(data_set_name)
 
@@ -51,11 +51,11 @@ for i = 1:length(filter_len)
 %     saveas(gcf, sprintf(predictedXreferece_plot_name, filter_len(i), mid_layer_sz_plot));
     
     figure
-    trace = [reference_trace(1:sample_predicted); target'-predicted_trace(:, mid_layer_plot_idx, i)]; 
+    trace = target'-predicted_trace(:, mid_layer_plot_idx, i); 
     trace = trace/max(trace);
-    plot(radon_prim_offset150m(19:end, 22)./max(radon_prim_offset150m(19:end, 22)),'r--')
+    plot(radon_prim_offset150m(:, trace_nb)./max(radon_prim_offset150m(:, trace_nb)),'r--')
     hold on
-    plot(trace)
+    plot(trace,'g')
     ylim([min(trace) max(trace)])
     xlim([0 110]);
     legend(sprintf('Filter length %d - Neural network size %d', filter_len(i), mid_layer_sz_plot));

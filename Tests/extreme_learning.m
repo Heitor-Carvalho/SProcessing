@@ -20,7 +20,7 @@ debug_mode = 0;
 % Trace pre-processing
 trace_nb = 22;
 attenuation_factor = 1;
-samples_start = 19;
+samples_start = 1;
 
 % Removing firt zeros samples and nomalizing data
 trace_norm = trace_pre_processing(radon_mult_offset150m, trace_nb, samples_start, attenuation_factor);
@@ -33,12 +33,12 @@ if(debug_mode)
   grid
 end
 
-sample_to_predict = 33;
-filter_len = [10 12 14 16 18];
+sample_to_predict = 25;
+filter_len = [5];
 mid_layer_sz = 1:2:80;
 regularization = 1e-4;
 
-predicted_trace = zeros(length(trace_norm)-sample_to_predict+1, length(mid_layer_sz), length(filter_len));
+predicted_trace = zeros(length(trace_norm), length(mid_layer_sz), length(filter_len));
 mse = zeros(1, length(mid_layer_sz), length(filter_len));
 
 test_counter = 0;
@@ -52,12 +52,12 @@ for i = 1:length(filter_len)
     nn.func = @tanh;
     nn.b = 0;
 
-    nn.v = 0.5*rand(in_sz+1, mid_layer_sz(j));
+    nn.v = 0.5*(rand(in_sz+1, mid_layer_sz(j)));
     nn = neuro_net_init(nn);
 
     % Preparing data based in parameters
     [train_set, target] = trace_to_datatraining(trace_norm, filter_len(i), sample_to_predict-filter_len(i));
-    
+
     % Calculating extreme learning machines values
     nn.w = calc_elm_weigths(train_set, target, regularization, nn)';
     nn_{test_counter+1} = nn;

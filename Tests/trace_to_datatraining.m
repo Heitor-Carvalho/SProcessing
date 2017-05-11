@@ -9,14 +9,8 @@ function [train_set, target] = trace_to_datatraining(trace, filter_len, predicti
 %  train_set      - matrix with one training pattern per line
 %  target         - reference to each pattern
   
-  training_sample = length(trace)-filter_len-prediction_len+1;
 
-  target = zeros(1, training_sample);
-  target(:) = trace(filter_len+prediction_len:end)';
-
-  train_set = zeros(filter_len, training_sample);
-  for i = 1:length(trace)-filter_len-prediction_len+1
-    train_set(:, i) = trace(i:i+filter_len-1);     
-  end
+  train_set = toeplitz(zeros(filter_len, 1),[zeros(1, prediction_len) trace(1:end - prediction_len)']);
+  target = trace';
 
 end
