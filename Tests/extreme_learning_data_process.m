@@ -28,12 +28,12 @@ grid
 
 reference_trace = trace_pre_processing(radon_mult_offset150m, trace_nb, samples_start, attenuation_factor);
 
-mid_layer_sz_plot = 69;
+mid_layer_sz_plot = 60;
 mid_layer_plot_idx = find(mid_layer_sz == mid_layer_sz_plot);
 
 predictedXreferece_plot_name     = 'PredictedTrace_X_RefereceTrace_filter_length%d_mid_layer_size%d.png';
 predictedMinusreferece_plot_name = 'PredictedTrace_Minus_RefereceTrace_filter_length%d_mid_layer_size%d.png';
-max_sample = 300;
+max_sample = 400;
 
 for i = 1:length(filter_len)
     
@@ -57,7 +57,7 @@ for i = 1:length(filter_len)
     hold on
     plot(trace,'g')
     ylim([min(trace) max(trace)])
-    xlim([0 110]);
+    xlim([0 max_sample]);
     legend(sprintf('Filter length %d - Neural network size %d', filter_len(i), mid_layer_sz_plot));
     grid
 

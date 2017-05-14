@@ -34,9 +34,9 @@ if(debug_mode)
 end
 
 sample_to_predict = 25;
-filter_len = [5];
-mid_layer_sz = 1:2:80;
-regularization = 1e-4;
+filter_len = [8];   
+mid_layer_sz = 2:2:80;
+regularization = 0;
 
 predicted_trace = zeros(length(trace_norm), length(mid_layer_sz), length(filter_len));
 mse = zeros(1, length(mid_layer_sz), length(filter_len));

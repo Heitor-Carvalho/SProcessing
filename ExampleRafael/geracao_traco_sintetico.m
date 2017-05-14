@@ -2,6 +2,7 @@ clear all;
 close all;
 
 addpath('../ThirdParty/SeismicLab/codes/synthetics/')
+addpath('../ThirdParty/SeismicLab/codes/seismic_plots/')
 
 %%% Script para criar um cmp sintetico simulando multiplas de curto periodo
 % Rafael Ferrari 06/08/2014
@@ -52,11 +53,11 @@ dado_div = dado.*Div_esf;
 dado_p_div = dado_p.*Div_esf;
 
 figure(3)
-plot(dado(:, 22))
+wigb(dado,1,h,tempo)
 title('Tra�os originais')
 
 figure(4)
-plot(dado_div(:, 22))
+wigb(dado_div,1,h,tempo)
 title('Tra�os com compensa��o de diverg�ncia esf�rica')
 
 
@@ -95,11 +96,11 @@ dado_div_v2 = dado_v2.*Div_esf;
 dado_p_div_v2 = dado_p_v2.*Div_esf;
 
 figure(7)
-plot(dado_v2(:, 22))
+wigb(dado_v2,1,h,tempo)
 title('Tra�os originais')
 
 figure(8)
-wigb(dado_div_v2(:, 22))
+wigb(dado_div_v2,1,h,tempo)
 title('Tra�os com compensa��o de diverg�ncia esf�rica')
 
 % Dado sem correcao de divergencia esferica
@@ -110,11 +111,11 @@ dado_completo_div = dado_div + dado_div_v2;
 dado_completo_primarias_div = dado_p_div + dado_p_div_v2;
 
 figure(9)
-plot(dado_completo(:, 22))
+wigb(dado_completo,1,h,tempo)
 title('Tra�os originais')
 
 figure(10)
-plot(dado_completo_div(:, 22))
+wigb(dado_completo_div,1,h,tempo)
 title('Tra�os com diverg�ncia esf�rica')
 
 % Calculo dos tra�os no dom�nio transformado
