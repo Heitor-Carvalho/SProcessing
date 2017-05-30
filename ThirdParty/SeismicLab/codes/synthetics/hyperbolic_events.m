@@ -64,9 +64,30 @@ function [d,h,t] = hyperbolic_events(dt,f0,tmax,h,tau,v,amp,snr,L);
 
 % Important: the following lines is to have the maximum of the Ricker
 % wavelet at the right intercept time
+% All the calculations are done in the frequency domain. That's way the
+% delay in time converted to a exponential multiplication in the frequency
+% domain
 
+% This delay corresponds adjust the peak of Ricker wavelet to center of the
+% first intercept event.
  delay = dt*(floor(nw/2)+1);
 
+ % The FFTs are calculated considering that the traveling time follows the
+ % equation sqrt(tau(k)^2 + (h/v(k)).^2).
+ % The Shift is calculated to the all the offsets in the vector h
+ % n_events is equal the number of multiples
+ % To represent multiples of a signal, the vector tau must increase in
+ % multiples of integers. Ex: 0.1, 0.2, 0.3 - etc.
+ % Normally in the equation sqrt(tau(k)^2 + (h/v(k)).^2) the tau is time
+ % from the signal from the source to the botton of the ocean until it came
+ % back to surfice. 
+ % The multiples are normally calculated by the expression n*sqrt(tau(k)^2 + (h/(n*v(k))).^2)
+ % where n is the multiple number.
+ % But, using tau as in the exemplo is equivalent to use the n mentioned
+ % above.
+ % Tha amp vector are the event for each tau
+ % This process can be viewed as the wavelet convolution with a series of
+ % impulses positioned ate 
  for ifreq=1:nfft/2+1
   w = 2.*pi*(ifreq-1)/nfft/dt;
    for k=1:n_events
