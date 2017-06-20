@@ -7,30 +7,20 @@
 % - sweep_param:  Parameter changed vector
 
 figure(1)
-plot(sweep_param, mse)
+plot(sweep_param, mse,'*-')
 xlabel(xlabel_txt);
-ylabel(ylabel_txt);
-title('Prediction MSE')
+ylabel('MSE');
+title('Erro do preditor - MSE')
 grid
-saveas(gcf, sprintf('prediction_mse_changepar_%d.jgp', xlabel_txt));
+saveas(gcf, sprintf('prediction_mse_changepar_%s.jpg', file_name_ext));
 savefig(sprintf('prediction_mse_changepar_%d.jgp', xlabel_txt));
 
 figure(2)
-plot(sweep_param, mse_p)
+plot(sweep_param, mse_p, '*-')
 xlabel(xlabel_txt);
-ylabel(ylabel_txt);
-title('Only primary trace error')
+ylabel('MSE');
+title('Error do sinal recuperado e desejado')
 grid
-saveas(gcf, sprintf('primary_mse_changepar_%d.jgp', xlabel_txt));
+saveas(gcf, sprintf('primary_mse_changepar_%s.jpg', file_name_ext));
 savefig(sprintf('primary_mse_changepar_%d.jgp', xlabel_txt));
 
-
-
-figure(3)
-plot(sweep_param, mse_p)
-xlabel(xlabel_txt);
-ylabel(ylabel_txt);
-title('Prediction error. Only primary trace error')
-grid
-saveas(gcf, sprintf('prediction_primary_mse_changepar_%d.jgp', xlabel_txt));
-savefig(sprintf('prediction_primary_mse_changepar_%d.jgp', xlabel_txt));

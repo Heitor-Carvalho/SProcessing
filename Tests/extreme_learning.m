@@ -11,7 +11,7 @@ debug_mode = 0;
 %% Test Script
 
 % Trace pre-processing
-trace_nb = 302;
+trace_nb = 250;
 attenuation_factor = 1;
 samples_start = 1;
 traces_matrix = radon_mult_offset150m_p1;
@@ -36,11 +36,16 @@ end
 % Test data name
 test_name = 'TT';
 
-sample_to_predict = 30;
+sample_to_predict = 20:41;
 filter_len = 10;   
 mid_layer_sz = 60;
 regularization = 0;
-initial_weigths_amp = 0.1:0.1:3;
+initial_weigths_amp = 0.5;
+
+
+% Variables used to generate plot figures
+sweep_param = sample_to_predict;
+[file_name_ext, xlabel_txt] = net_analisys_text(0);
 
 % Parameters lengths
 sample_to_predict_params_len = length(sample_to_predict);
