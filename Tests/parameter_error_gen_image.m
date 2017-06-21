@@ -13,7 +13,7 @@ ylabel('MSE');
 title('Erro do preditor - MSE')
 grid
 saveas(gcf, sprintf('prediction_mse_changepar_%s.jpg', file_name_ext));
-savefig(sprintf('prediction_mse_changepar_%d.jgp', xlabel_txt));
+savefig(sprintf('prediction_mse_changepar_%s.fig', xlabel_txt));
 
 figure(2)
 plot(sweep_param, mse_p, '*-')
@@ -22,5 +22,5 @@ ylabel('MSE');
 title('Error do sinal recuperado e desejado')
 grid
 saveas(gcf, sprintf('primary_mse_changepar_%s.jpg', file_name_ext));
-savefig(sprintf('primary_mse_changepar_%d.jgp', xlabel_txt));
+savefig(sprintf('primary_mse_changepar_%s.fig', xlabel_txt));
 

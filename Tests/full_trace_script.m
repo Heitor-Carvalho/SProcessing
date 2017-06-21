@@ -1,5 +1,5 @@
 % Loading traces matrix in Radon domain
-data_set_name = './DataSets/tracos_radon_p2';
+data_set_name = './DataSets/tracos_radon_p1';
 data_set_parm_name = './DataSets/traco_parametros';
 load(data_set_name)
 load(data_set_parm_name)
@@ -12,20 +12,19 @@ addpath('../ThirdParty/SeismicLab/codes/radon_transforms/')
 % Traces pre-processing
 attenuation_factor = 1;
 samples_start = 1;
-traces_matrix = radon_mult_offset150m_p2;
-traces_matrix_prim = radon_prim_offset150m_p2;
+traces_matrix = radon_mult_offset150m_p1;
+traces_matrix_prim = radon_prim_offset150m_p1;
 
-sample_to_predict = 30;
+sample_to_predict = 21;
 filter_len = 10;   
 mid_layer_sz = 60;
-regularization = 1e-3;
-initial_weigths_amp = 1;
+regularization = 1e-8;
+initial_weigths_amp = 0.5;
 
 deconvolved_matrix = zeros(size(traces_matrix));
 trace_nb = size(traces_matrix, 2);
 
 for i=1:trace_nb
-  i
   
   % Nomalizing data
   [trace_norm, std_dev, avg, max_amp] = trace_pre_processing(traces_matrix, i, samples_start, attenuation_factor);
@@ -52,7 +51,7 @@ for i=1:trace_nb
 
 end
 
-% primaries = forward_radon_freq(radon_prim_offset150m_p2,dt,h_fo150,q,1,flow,fhigh);
+% primaries = forward_radon_freq(traces_matrix_prim,dt,h_fo150,q,1,flow,fhigh);
 prim_est = forward_radon_freq(deconvolved_matrix,dt,h_fo150,q,1,flow,fhigh);
-% multiples = forward_radon_freq(radon_mult_offset150m_p2,dt,h_fo150,q,1,flow,fhigh);
+% multiples = forward_radon_freq(traces_matrix,dt,h_fo150,q,1,flow,fhigh);
 
