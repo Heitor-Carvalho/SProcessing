@@ -4,7 +4,7 @@ addpath('../../IA353/BackPropagation')
 addpath('../../IA353/LineSearchs')
 
 % Loading traces matrix in Radon domain
-data_set_name = './DataSets/tracos_radon_p1';
+data_set_name = './DataSets/tracos_radon_p2';
 load(data_set_name)
 
 debug_mode = 0; 
@@ -15,8 +15,8 @@ debug_mode = 0;
 trace_nb = 22;
 attenuation_factor = 1;
 samples_start = 1;
-traces_matrix = radon_mult_offset150m_p1;
-traces_matrix_prim = radon_prim_offset150m_p1;
+traces_matrix = radon_mult_offset150m_p2;
+traces_matrix_prim = radon_prim_offset150m_p2;
 
 % Nomalizing data
 trace_norm = trace_pre_processing(traces_matrix, trace_nb, samples_start, attenuation_factor);
@@ -37,19 +37,19 @@ end
 % Test data name
 test_name = 'TT';
 
-sample_to_predict = 30;
+prediction_step = 17;
 filter_len = 10;   
 mid_layer_sz = 60;
 regularization = 0;
-initial_weigths_amp = 1;
+initial_weigths_amp = 10;
 
 % Parameters lengths
-sample_to_predict_params_len = length(sample_to_predict);
+prediction_step_params_len = length(prediction_step);
 filter_params_len = length(filter_len);
 mid_layer_params_len = length(mid_layer_sz);
 regularization_params_len = length(regularization);
 
-total_tests_nb = sample_to_predict_params_len*filter_params_len*mid_layer_params_len*regularization_params_len;
+total_tests_nb = prediction_step_params_len*filter_params_len*mid_layer_params_len*regularization_params_len;
 
 predicted_trace = zeros(length(trace_norm), total_tests_nb);
 mse = zeros(total_tests_nb, 1);
@@ -60,7 +60,7 @@ test_counter = 1;
 train_par.max_it = 50;
 train_par.max_error = 1e-6;
 
-for i = 1:length(sample_to_predict)
+for i = 1:length(prediction_step)
   for j = 1:length(regularization)
     for k = 1:length(filter_len)
       for l = 1:length(mid_layer_sz)
@@ -78,10 +78,10 @@ for i = 1:length(sample_to_predict)
         nn = neuro_net_init(nn);
 
         % Preparing data based in parameters
-        [train_set, target] = trace_to_datatraining(trace_norm, filter_len(k), sample_to_predict(i)-filter_len(k));
+        [train_set, target] = trace_to_datatraining(trace_norm, filter_len(k), prediction_step(i));
 
         % Calculating extreme learning machines values
-        [nnt] = batch_cg_bfgs_training(train_set, target, nn, train_par, 1e-3)';
+        [nn, error_hist, it] = batch_cg_bfgs_training(train_set, target, nn, train_par);
         nn_{test_counter} = nn;
 
         % Neural network prediction
@@ -96,10 +96,32 @@ for i = 1:length(sample_to_predict)
   end
 end
 
+test_counter = test_counter - 1;
+
+figure(3)
+plot(0.2*trace_norm_prim,'linewidth',2)
+xlim([0 250])
+grid
+
+figure(4)
+subplot(2,1,1)
+plot(0.2*(target' - predicted_trace(:, test_counter)),'linewidth',2)
+hold on 
+plot(0.2*(trace_norm), '--','linewidth',2)
+legend('Traço Filtrado', 'Traço original')
+xlim([0 250])
+grid
+
+subplot(2,1,2)
+lagmax = 300;
+acort_traco_filtrado = xcorr((target' - predicted_trace(:, test_counter)), 'biased');
+plot(acort_traco_filtrado(length(trace_norm):length(trace_norm)+lagmax),'linewidth',2)
+title('Autocorrelação do traço filtrado')
+xlim([0 lagmax]); xlabel('lag'); grid;
 
 % Saving files
 save(test_name, 'mse', 'mse_p', 'predicted_trace', 'nn_', 'trace_nb', 'samples_start', 'attenuation_factor', ...
-                'mid_layer_sz', 'filter_len', 'sample_to_predict', 'regularization', 'initial_weigths_amp',  ...
+                'mid_layer_sz', 'filter_len', 'prediction_step', 'regularization', 'initial_weigths_amp',  ...
                 'data_set_name');
 
 
