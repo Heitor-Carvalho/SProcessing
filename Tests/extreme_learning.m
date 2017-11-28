@@ -104,8 +104,7 @@ xlim([0 250])
 grid
 
 figure(4)
-subplot(2,1,1)
-plot(0.2*(target' - predicted_trace(:, test_counter)),'linewidth',2)
+plot(0.2*(trace_norm), 'k','linewidth', 1.5)
 hold on 
 plot(0.2*(trace_norm), '--','linewidth',2)
 legend('Traço Filtrado', 'Traço original')
@@ -114,11 +113,13 @@ grid
 
 subplot(2,1,2)
 lagmax = 300;
+acort_traco = xcorr((target'), 'biased');
 acort_traco_filtrado = xcorr((target' - predicted_trace(:, test_counter)), 'biased');
 plot(acort_traco_filtrado(length(trace_norm):length(trace_norm)+lagmax),'linewidth',2)
 title('Autocorrelação do traço filtrado')
 xlim([0 lagmax]); xlabel('lag'); grid;
 
+parameter_error_gen_image
 % Saving files
 save(test_name, 'mse', 'mse_p', 'predicted_trace', 'nn_', 'trace_nb', 'samples_start', 'attenuation_factor', ...
                 'mid_layer_sz', 'filter_len', 'prediction_step', 'regularization', 'initial_weigths_amp',  ...

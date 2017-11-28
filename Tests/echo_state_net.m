@@ -8,6 +8,7 @@ load(data_set_name)
 
 debug_mode = 0; 
 
+rng(1)
 %% Test Script
 
 % Trace pre-processing
@@ -40,8 +41,12 @@ prediction_step = 17;
 filter_len = 10;   
 mid_layer_sz = 10;
 regularization = 0;
-initial_weigths_amp = 1;
-spectral_radio = 0.9;
+initial_weigths_amp = 0.9;
+spectral_radio = 0.98;
+
+% Variables used to generate plot figures
+sweep_param = filter_len;
+[file_name_ext, xlabel_txt] = net_analisys_text(1);
 
 % Parameters lengths
 prediction_step_params_len = length(prediction_step);
@@ -69,7 +74,7 @@ for i = 1:length(prediction_step)
         feedback_par.sz = [mid_layer_sz(l) mid_layer_sz(l)];
         feedback_par.range = initial_weigths_amp;
         feedback_par.alpha = spectral_radio;
-        % feedback_par.sparseness = 1;
+%       feedback_par.sparseness = 1;
         out_sz = 1;
         nn.func = @tanh;
         nn.b = 0;
@@ -109,6 +114,7 @@ subplot(2,1,1)
 plot(0.2*(target' - predicted_trace(:, test_counter)),'linewidth',2)
 hold on 
 plot(0.2*(trace_norm), '--','linewidth',2)
+plot(0.2*trace_norm_prim, '--g','linewidth',1)
 legend('Traço Filtrado', 'Traço original')
 xlim([0 250])
 grid
@@ -120,7 +126,7 @@ plot(acort_traco_filtrado(length(trace_norm):length(trace_norm)+lagmax),'linewid
 title('Autocorrelação do traço filtrado')
 xlim([0 lagmax]); xlabel('lag'); grid;
 
-
+parameter_error_gen_image
 % Saving files
 save(test_name, 'mse', 'mse_p', 'predicted_trace', 'nn_', 'trace_nb', 'samples_start', 'attenuation_factor', ...
                 'mid_layer_sz', 'filter_len', 'prediction_step', 'regularization', 'initial_weigths_amp',  ...
