@@ -144,7 +144,9 @@ xlim([0 tmax_plot])
 grid
 
 %% All traces generations
-hyperbolic_resumed = @(tau, velocity, amp) hyperbolic_events(dt, f, tmax, h, tau, velocity, amp, SNR,1);
+hyperbolic_resumed = @(tau, velocity, amp) hyperbolic_events(dt, f, tmax, h, tau, velocity, amp, SNR, 1);
+std_dev = 0;
+hyperbolic_resumed = @(tau, velocity, amp) hyperbolic_events_time(dt, f, tmax, h, tau, velocity, amp, std_dev, 1);
 
 % Water botton layer traces (first primary)
 v1 = 1500*ones(length(h), 1);
