@@ -5,12 +5,12 @@ addpath('../../Tests');
 load('CaseData1_0/tracos_in_time');
 load('CaseData1_0/parameter');
 
-%% Case 2.1 - Anlisys of time trace - One primary and multiples
+%% Case 2.3 - Anlisys of time trace - Two primary and multiples
 
 time = 0:dt:tmax;
 
 % Plotting the trace
-trace_1 = trace_p1_fst_prim_multiples(:, 1);
+trace_1 = trace_p1p2_fst_prim_multiples(:, 1);
 
 figure(1)
 plot(time, trace_1)
@@ -18,9 +18,8 @@ grid
 
 %% Getting the traning data (Matrix used in regression)
 
-% In this ideal case, a filter with one coefficient is enough to recover
-% the primary. Also, for this case, we can plot the function and regression
-% line.
+% In this simple case, a filter with one coefficient is enough to recover 
+% the primaries
 
 filter_one_len = 1;
 prediction_step = 100;
@@ -36,48 +35,6 @@ grid
 
 figure(3)
 plot(time, target, time, target - train_matrix*gain, '--')
-legend('Trace with primaries and multiples', 'Primary recovered')
-xlim([0 1.5])
-grid
-
-% We can algo plot the gain between the input sample and the sample to be
-% predicted, we expect to a straight line of value 0.6
-
-sample_gain = target./circshift(target', prediction_step)';
-
-figure(4)
-plot(time, sample_gain)
-legend('Gain betwen sample to predicted and filter input sample')
-xlim([0 1.5])
-grid
-
-% We can note some points out of the regression line, this points
-% correspond to the primary that is not removed
-
-%% We can also see the regression when the filter has length two
-
-filter_one_len = 2;
-prediction_step = 100;
-
-
-[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
-
-gain = inv(train_matrix*train_matrix')*train_matrix*target'
-
-[mesh_x, mesh_y] = meshgrid(-1:0.1:1, -1:0.1:1);
-regression_plan = [mesh_x(:), mesh_y(:)]*gain;
-regression_plan = reshape(regression_plan, size(mesh_x));
-
-% Regression for filter length 2
-figure(4)
-plot3(train_matrix(1, :), train_matrix(2, :), target,'.', train_matrix(1,:), train_matrix(2,:), gain'*train_matrix)
-hold on
-mesh(mesh_x, mesh_y, regression_plan)
-view(30, 18);
-grid
-
-figure(5)
-plot(time, target, time, target - gain'*train_matrix, '--')
 legend('Trace with primaries and multiples', 'Primary recovered')
 xlim([0 1.5])
 grid

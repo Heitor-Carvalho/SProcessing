@@ -13,7 +13,7 @@ reflextions_number = 20;            % Number of reflextions
 max_idx = round(tmax/dt) + 1;       % Max time array index
 tmax_plot = 1.5;                    % Max time in plot
 wiggle_xlimit = 300;                 % Max trace in Wiggle plot x axis
-wiggle_ylimit = 500;                 % Max trace in Wiggle plot y axis
+wiggle_ylimit = 900;                 % Max trace in Wiggle plot y axis
 
 % General simulation configurations
 f = 30;                             % Wavelet central frequency
@@ -185,7 +185,7 @@ trace_p2_sec_multiples_div = spheric_divergence(time, offsets, v2(1), trace_p2_s
 
 % Case 1 - Only P1
 figure(7)
-wiggle(trace_p1_fst_primaries_div)
+wiggle(trace_p1_fst_primaries)
 title('Primaries 1')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -196,7 +196,7 @@ trace_p1_fst_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples;
 trace_p1_fst_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div;
 
 figure(8)
-wiggle(trace_p1_fst_prim_multiples_div)
+wiggle(trace_p1_fst_prim_multiples)
 title('Primaries 1 and fisrt order multiples')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -204,7 +204,7 @@ grid
 
 % Case 3 - Only P2
 figure(9)
-wiggle(trace_p2_fst_primaries_div)
+wiggle(trace_p2_fst_primaries)
 title('Primaries 2')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -215,7 +215,7 @@ trace_p2_fst_prim_multiples = trace_p2_fst_primaries + trace_p2_fst_multiples;
 trace_p2_fst_prim_multiples_div = trace_p2_fst_primaries_div + trace_p2_fst_multiples_div;
 
 figure(10)
-wiggle(trace_p2_fst_prim_multiples_div)
+wiggle(trace_p2_fst_prim_multiples)
 title('Primaries 2 and fisrt order multiples')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -226,7 +226,7 @@ trace_p1p2_fst_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples 
 trace_p1p2_fst_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div + trace_p2_fst_primaries_div + trace_p2_fst_multiples_div;
 
 figure(11)
-wiggle(trace_p1p2_fst_prim_multiples_div)
+wiggle(trace_p1p2_fst_prim_multiples)
 title('Primaries 1, 2 and fisrt order multiples')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -237,7 +237,7 @@ trace_p2_sec_prim_multiples = trace_p2_fst_primaries + trace_p2_sec_multiples;
 trace_p2_sec_prim_multiples_div = trace_p2_fst_primaries_div + trace_p2_sec_multiples_div;
 
 figure(12)
-wiggle(trace_p2_fst_prim_multiples_div)
+wiggle(trace_p2_fst_prim_multiples)
 title('Primaries 2 and second order multiples')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -248,7 +248,7 @@ trace_p1p2_sec_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples 
 trace_p1p2_sec_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div + trace_p2_fst_primaries_div + trace_p2_sec_multiples_div;
 
 figure(13)
-wiggle(trace_p1p2_sec_prim_multiples_div)
+wiggle(trace_p1p2_sec_prim_multiples)
 title('Primaries 1, 2 and second order multiples')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
@@ -363,4 +363,5 @@ save('parameter', 'dt', 'tmax', 'reflextions_number', 'f', 'h', 'SNR', ...
                   'coef_ref_water', 't0_water', 't0_p1', 'p1_amp'    , ...
                   't0_p2', 'p2_amp', 'flow', 'fhigh', 'mu'           , ...
                   'radon_type', 'q', 'h_ofsset150m' )
+%%
 close all

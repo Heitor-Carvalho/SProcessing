@@ -12,7 +12,7 @@ function [trace_matrix, h, time] = hyperbolic_events_time(dt, f0, tmax, h, tau, 
   trace_matrix = zeros(max_idx, length(h));
 
   for k=1:length(h)
-    offset_delay(:, k) = sqrt(tau.^2 + (h(k)./v(k)).^2);
+    offset_delay(:, k) = sqrt(tau.^2 + (h(k)./v(1)).^2);
     offset_delay_idx(:, k) = round(offset_delay(:, k)/dt);
     out_range_idx = offset_delay_idx(:,k) > max_idx;
     trace_matrix(offset_delay_idx(~out_range_idx,k)-wavelet_delay_idx, k) = amp(~out_range_idx);
