@@ -267,7 +267,7 @@ inverse_radon_freq_res = @(trace, h) inverse_radon_freq(trace, dt, h, q, radon_t
 
 % Case 1 - Only P1
 radon_p1_fst_prim_div = inverse_radon_freq_res(trace_p1_fst_primaries_div, h);
-radon_p1_fst_prim_div_offset = inverse_radon_freq_res(trace_p1_fst_primaries_div(31:end), h_ofsset150m);
+radon_p1_fst_prim_div_offset = inverse_radon_freq_res(trace_p1_fst_primaries_div(:, 31:end), h_ofsset150m);
 
 figure(14)
 wiggle(radon_p1_fst_prim_div)
@@ -278,7 +278,7 @@ grid
 
 % Case 2 - P1 and fisrt order multiples
 radon_p1_fst_mul_div = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div, h);
-radon_p1_fst_mul_div_offset = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div(31:end), h_ofsset150m);
+radon_p1_fst_mul_div_offset = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
 figure(15)
 wiggle(radon_p1_fst_mul_div)
@@ -289,7 +289,7 @@ grid
 
 % Case 3 - Only P2
 radon_p2_fst_prim_div = inverse_radon_freq_res(trace_p2_fst_primaries_div, h);
-radon_p2_fst_prim_div_offset = inverse_radon_freq_res(trace_p2_fst_primaries_div(31:end), h_ofsset150m);
+radon_p2_fst_prim_div_offset = inverse_radon_freq_res(trace_p2_fst_primaries_div(:, 31:end), h_ofsset150m);
 
 figure(16)
 wiggle(radon_p2_fst_prim_div)
@@ -300,7 +300,7 @@ grid
 
 % Case 4 - P2 and fisrt order multiples
 radon_p2_fst_mul_div = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div, h);
-radon_p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div(31:end), h_ofsset150m);
+radon_p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
 figure(17)
 wiggle(radon_p2_fst_mul_div)
@@ -311,7 +311,7 @@ grid
 
 % Case 5 - P1 and P2 fisrt order multiples
 radon_p1p2_fst_mul_div = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div, h);
-radon_p1p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div(31:end), h_ofsset150m);
+radon_p1p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
 figure(17)
 wiggle(radon_p1p2_fst_mul_div)
@@ -322,7 +322,7 @@ grid
 
 % Case 6 - P2 second order multiples
 radon_p2_sec_mul_div = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div, h);
-radon_p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div(31:end), h_ofsset150m);
+radon_p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div(:, 31:end), h_ofsset150m);
 
 figure(18)
 wiggle(radon_p2_sec_mul_div)
@@ -333,7 +333,7 @@ grid
 
 % Case 7 - P1 and P2 second order multiples
 radon_p1p2_sec_mul_div = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div, h);
-radon_p1p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div(31:end), h_ofsset150m);
+radon_p1p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div(:, 31:end), h_ofsset150m);
 
 figure(19)
 wiggle(radon_p1p2_sec_mul_div)
