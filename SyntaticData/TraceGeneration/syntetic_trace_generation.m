@@ -146,7 +146,7 @@ grid
 %% All traces generations
 hyperbolic_resumed = @(tau, velocity, amp) hyperbolic_events(dt, f, tmax, h, tau, velocity, amp, SNR, 1);
 std_dev = 0;
-hyperbolic_resumed = @(tau, velocity, amp) hyperbolic_events_time(dt, f, tmax, h, tau, velocity, amp, std_dev, 1);
+hyperbolic_resumed_time = @(tau, velocity, amp) hyperbolic_events_time(dt, f, tmax, h, tau, velocity, amp, std_dev, 1);
 
 % Water botton layer traces (first primary)
 v1 = 1500*ones(length(h), 1);
@@ -156,9 +156,16 @@ amp1 = 1;
 [trace_p1_fst_primaries, offsets, time] = hyperbolic_resumed(p1_delta_time, v1(1), amp1);
 [trace_p1_fst_multiples, ~, ~] =  hyperbolic_resumed(tau1, v1, p1_fst_mult_amp);
 
+[trace_p1_fst_primaries_time, ~, ~] = hyperbolic_resumed_time(p1_delta_time, v1(1), amp1);
+[trace_p1_fst_multiples_time, ~, ~] =  hyperbolic_resumed_time(tau1, v1, p1_fst_mult_amp);
+
 % Spheric divergence
 trace_p1_fst_primaries_div = spheric_divergence(time, offsets, v1(1), trace_p1_fst_primaries);
 trace_p1_fst_multiples_div = spheric_divergence(time, offsets, v1(1), trace_p1_fst_multiples);
+
+trace_p1_fst_primaries_div_time = spheric_divergence(time, offsets, v1(1), trace_p1_fst_primaries_time);
+trace_p1_fst_multiples_div_time = spheric_divergence(time, offsets, v1(1), trace_p1_fst_multiples_time);
+%TODO -> Finishing add a time version, compare the two version more closely
 
 % Second primary traces
 v2 = 1650*ones(length(h),1);
