@@ -175,9 +175,15 @@ amp2 = 0.3;
 [trace_p2_fst_primaries, offsets, time] = hyperbolic_resumed(p2_delta_time, v2(1), amp2);
 [trace_p2_fst_multiples, ~, ~] =  hyperbolic_resumed(tau2, v2, p2_fst_mult_amp);
 
+[trace_p2_fst_primaries_time, ~, ~] = hyperbolic_resumed_time(p2_delta_time, v2(1), amp2);
+[trace_p2_fst_multiples_time, ~, ~] =  hyperbolic_resumed_time(tau2, v2, p2_fst_mult_amp);
+
 % Spheric divergence
 trace_p2_fst_primaries_div = spheric_divergence(time, offsets, v2(1), trace_p2_fst_primaries);
 trace_p2_fst_multiples_div = spheric_divergence(time, offsets, v2(1), trace_p2_fst_multiples);
+
+trace_p2_fst_primaries_div_time = spheric_divergence(time, offsets, v2(1), trace_p2_fst_primaries_time);
+trace_p2_fst_multiples_div_time = spheric_divergence(time, offsets, v2(1), trace_p2_fst_multiples_time);
 
 % Second primary traces
 tau2_sec = p2_sec_mult_delta_times;
@@ -185,8 +191,12 @@ amp2_sec = p2_sec_mult_amp;
 
 [trace_p2_sec_multiples, offsets, time] = hyperbolic_resumed(tau2_sec, v2, p2_sec_mult_amp);
 
+[trace_p2_sec_multiples_time, offsets, time] = hyperbolic_resumed_time(tau2_sec, v2, p2_sec_mult_amp);
+
 % Spheric divergence
 trace_p2_sec_multiples_div = spheric_divergence(time, offsets, v2(1), trace_p2_sec_multiples);
+
+trace_p2_sec_multiples_div_time = spheric_divergence(time, offsets, v2(1), trace_p2_sec_multiples_time);
 
 %% All traces - Cases
 
@@ -201,6 +211,9 @@ grid
 % Case 2 - P1 and fisrt order multiples
 trace_p1_fst_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples;
 trace_p1_fst_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div;
+
+trace_p1_fst_prim_multiples_time = trace_p1_fst_primaries_time + trace_p1_fst_multiples_time;
+trace_p1_fst_prim_multiples_div_time = trace_p1_fst_primaries_div_time + trace_p1_fst_multiples_div_time;
 
 figure(8)
 wiggle(trace_p1_fst_prim_multiples)
@@ -221,6 +234,9 @@ grid
 trace_p2_fst_prim_multiples = trace_p2_fst_primaries + trace_p2_fst_multiples;
 trace_p2_fst_prim_multiples_div = trace_p2_fst_primaries_div + trace_p2_fst_multiples_div;
 
+trace_p2_fst_prim_multiples_time = trace_p2_fst_primaries_time + trace_p2_fst_multiples_time;
+trace_p2_fst_prim_multiples_div_time = trace_p2_fst_primaries_div_time + trace_p2_fst_multiples_div_time;
+
 figure(10)
 wiggle(trace_p2_fst_prim_multiples)
 title('Primaries 2 and fisrt order multiples')
@@ -231,6 +247,9 @@ grid
 % Case 5 - P1 and P2 fisrt order multiples
 trace_p1p2_fst_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples + trace_p2_fst_primaries + trace_p2_fst_multiples;
 trace_p1p2_fst_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div + trace_p2_fst_primaries_div + trace_p2_fst_multiples_div;
+
+trace_p1p2_fst_prim_multiples_time = trace_p1_fst_primaries_time + trace_p1_fst_multiples_time + trace_p2_fst_primaries_time + trace_p2_fst_multiples_time;
+trace_p1p2_fst_prim_multiples_div_time = trace_p1_fst_primaries_div_time + trace_p1_fst_multiples_div_time + trace_p2_fst_primaries_div_time + trace_p2_fst_multiples_div_time;
 
 figure(11)
 wiggle(trace_p1p2_fst_prim_multiples)
@@ -243,6 +262,9 @@ grid
 trace_p2_sec_prim_multiples = trace_p2_fst_primaries + trace_p2_sec_multiples;
 trace_p2_sec_prim_multiples_div = trace_p2_fst_primaries_div + trace_p2_sec_multiples_div;
 
+trace_p2_sec_prim_multiples_time = trace_p2_fst_primaries_time + trace_p2_sec_multiples_time;
+trace_p2_sec_prim_multiples_div_time = trace_p2_fst_primaries_div_time + trace_p2_sec_multiples_div_time;
+
 figure(12)
 wiggle(trace_p2_fst_prim_multiples)
 title('Primaries 2 and second order multiples')
@@ -253,6 +275,9 @@ grid
 % Case 7 - P1 and P2 second order multiples
 trace_p1p2_sec_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples + trace_p2_fst_primaries + trace_p2_sec_multiples;
 trace_p1p2_sec_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div + trace_p2_fst_primaries_div + trace_p2_sec_multiples_div;
+
+trace_p1p2_sec_prim_multiples_time = trace_p1_fst_primaries_time + trace_p1_fst_multiples_time + trace_p2_fst_primaries_time + trace_p2_sec_multiples_time;
+trace_p1p2_sec_prim_multiples_div_time = trace_p1_fst_primaries_div_time + trace_p1_fst_multiples_div_time + trace_p2_fst_primaries_div + trace_p2_sec_multiples_div_time;
 
 figure(13)
 wiggle(trace_p1p2_sec_prim_multiples)
@@ -357,6 +382,14 @@ save('tracos_in_time', 'trace_p1_fst_primaries_div'       , 'trace_p1_fst_prim_m
                        'trace_p1p2_fst_prim_multiples_div', 'trace_p1p2_fst_prim_multiples', ...
                        'trace_p2_sec_prim_multiples_div'  , 'trace_p2_sec_prim_multiples'  , ...
                        'trace_p1p2_sec_prim_multiples_div', 'trace_p1p2_sec_prim_multiples');
+
+save('tracos_in_time_ideal', 'trace_p1_fst_primaries_div_time'       , 'trace_p1_fst_prim_multiples_time'  , ...
+                             'trace_p1_fst_prim_multiples_div_time'  , 'trace_p1_fst_prim_multiples_time'  , ...
+                             'trace_p2_fst_primaries_div_time'       , 'trace_p2_fst_primaries_time'       , ...
+                             'trace_p2_fst_prim_multiples_div_time'  , 'trace_p2_fst_prim_multiples_time'  , ...
+                             'trace_p1p2_fst_prim_multiples_div_time', 'trace_p1p2_fst_prim_multiples_time', ...
+                             'trace_p2_sec_prim_multiples_div_time'  , 'trace_p2_sec_prim_multiples_time'  , ...
+                             'trace_p1p2_sec_prim_multiples_div_time', 'trace_p1p2_sec_prim_multiples_time');
 
 save('tracos_in_radon', 'radon_p1_fst_prim_div' , 'radon_p1_fst_prim_div_offset'  , ...
                         'radon_p1_fst_mul_div'  , 'radon_p1_fst_mul_div_offset'   , ...
