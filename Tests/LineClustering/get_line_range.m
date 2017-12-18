@@ -1,4 +1,3 @@
-function [init_line1_y, range] = get_line_range(range, line_points)
-   m = diff(line_points(2, :))/diff(line_points(1,:));
-   init_line1_y = m*range + line_points(2, 1);
+function [line_array, range] = get_line_range(range, line)
+  line_array = repmat(line.v, length(range), 1).*repmat(range, length(line.v), 1)' + repmat(line.p, length(range), 1);
 end

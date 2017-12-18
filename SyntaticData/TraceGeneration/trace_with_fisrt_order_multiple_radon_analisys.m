@@ -2,15 +2,15 @@
 
 addpath('../../Tests');
 
-load('CaseData1_0/tracos_in_time_ideal');
+load('CaseData1_0/tracos_in_radon');
 load('CaseData1_0/parameter');
 
-%% Case 6.0 One primary and second order multiples
+%% Case 2.4 One primary and first order multiples - Radon Offset - Shperic Divergence
 
 time = 0:dt:tmax;
 
 % Plotting the trace
-trace_1 = trace_p2_sec_prim_multiples_time(:, 1);
+trace_1 = radon_p1_fst_mul_div_offset(:, 22);
 
 figure(1)
 plot(time, trace_1)
@@ -30,7 +30,7 @@ prediction_step = 100;
 gain = inv(train_matrix*train_matrix')*train_matrix*target'
 
 figure(2)
-plot(train_matrix, target,'--.', train_matrix, train_matrix*gain)
+plot(train_matrix, target,'.', train_matrix, train_matrix*gain)
 legend('Function to be approximated', 'FIR with one delay aproximation')
 grid
 
@@ -45,7 +45,8 @@ sample_gain = target./circshift(target', prediction_step)';
 figure(4)
 plot(time(500+1:end), sample_gain(500+1:end), '-')
 legend('Gain betwen sample to predicted and filter input sample')
-xlim([0 1.5])
+ylim([-20 20])
+xlim([0.5 3])
 grid
 
 % We can see, that in this case, the sample gain changes over time, this
@@ -55,10 +56,47 @@ grid
 % shows that a single feedfoward structures in uncapable of removing the
 % primaryes complete
 
+%% Linear regression with two coefficients
+
+filter_one_len = 2;
+prediction_step = 100;
+
+[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
+
+gain = inv(train_matrix*train_matrix')*train_matrix*target'
+
+[mesh_x, mesh_y] = meshgrid(-4:0.2:4, -4:0.2:4);
+mesh_x = mesh_x*1e-5;
+mesh_y = mesh_y*1e-5;
+regression_plan = [mesh_x(:), mesh_y(:)]*gain;
+regression_plan = reshape(regression_plan, size(mesh_x));
+
+figure(2)
+plot3(train_matrix(1, :), train_matrix(2, :), target,'.', train_matrix(1, :), train_matrix(2, :), gain'*train_matrix)
+grid
+
+figure(3)
+plot(time, target, time, target - gain'*train_matrix, '--')
+legend('Trace with primaries and multiples', 'Primary recovered')
+xlim([0 1.5])
+grid
+
+figure(4)
+plot3(train_matrix(1, :), train_matrix(2, :), target,'.', train_matrix(1,:), train_matrix(2,:), gain'*train_matrix)
+hold on
+mesh(mesh_x, mesh_y, regression_plan)
+view(30, 18);
+grid
+
+
 
 %% Polinomial regression
 
 % We can try use a polynomial instead of a linear regression
+filter_one_len = 1;
+prediction_step = 100;
+
+[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
 
 const = 0;
 kernel_poly_matrix = (train_matrix'*train_matrix+const).^2;
@@ -69,12 +107,12 @@ poly_features = [ones(1, size(train_matrix, 2)); train_matrix; train_matrix.^2; 
 gain_poly = inv(poly_features*poly_features')*poly_features*target'
 poly_regression_gain = kernel_poly_matrix*inv(kernel_poly_matrix + 1*eye(size(kernel_poly_matrix)));
 
-figure(5)
+figure(6)
 plot(train_matrix, target,'.', train_matrix, gain_poly'*poly_features)
 legend('Function to be approximated', 'FIR with one delay aproximation')
 grid
 
-figure(6)
+figure(7)
 plot(time, target, time, target - gain_poly'*poly_features, '--')
 legend('Trace with primaries and multiples', 'Primary recovered')
 xlim([0 1.5])
@@ -87,8 +125,8 @@ grid
 
 idx = 501:601;
 
-figure(7)
-for i = 1:10
+figure(8)
+for i = 1:5
   plot(train_matrix(idx+(i-1)*100), target(idx+(i-1)*100),'.-')
   hold on
 end

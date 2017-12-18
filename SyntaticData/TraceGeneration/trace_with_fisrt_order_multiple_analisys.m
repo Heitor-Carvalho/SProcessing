@@ -2,15 +2,15 @@
 
 addpath('../../Tests');
 
-load('CaseData1_0/tracos_in_time');
+load('CaseData1_0/tracos_in_time_ideal');
 load('CaseData1_0/parameter');
 
-%% Case 2.1 - Anlisys of time trace - One primary and multiples
+%% Case 2.0 One primary and multiples
 
 time = 0:dt:tmax;
 
 % Plotting the trace
-trace_1 = trace_p1_fst_prim_multiples(:, 1);
+trace_1 = trace_p1_fst_prim_multiples_time(:, 1);
 
 figure(1)
 plot(time, trace_1)

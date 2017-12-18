@@ -1,18 +1,17 @@
-function [normal_vector, point_projection, dist] = get_normal_vector(point, line_point)
+function [normal_vector, projection, dist] = get_normal_vector(point, line_point)
 
-  % Remove Y-axis offset
-  line_point(2, 2) = line_point(2, 2) - line_point(2, 1);
-  point(2) = point(2) - line_point(2, 1);
-
-  % Projection point into line
-  point_projection = line_point(:, 2)*(line_point(:, 2)'*point)/(line_point(:, 2)'*line_point(:, 2));
-
-  % Getting the normal vector
-  normal_vector = point - point_projection;
-
-  point_projection(2) = point_projection(2) + line_point(2, 1);
+  % Moving point to origin
+  point = point - line_point.p;
+  
+  % Projection point into line at origin
+  projection.v = line_point.v*(line_point.v*point')/(line_point.v*line_point.v');
+  projection.p = line_point.p;
+  
+  % Getting the normal vector at origin
+  normal_vector.v = point - projection.v;
+  normal_vector.p = projection.v + projection.p;
   
   % Distance = length(normal_vector)
-  dist = sqrt(normal_vector'*normal_vector);
+  dist = sqrt(normal_vector.v*normal_vector.v');
 
 end

@@ -5,12 +5,12 @@ addpath('../../Tests');
 load('CaseData1_0/tracos_in_radon');
 load('CaseData1_0/parameter');
 
-%% Case 2.4 - Anlisys of time trace - One primary and first order multiples - Shperic Divergence
+%% Case 2.3 One primary and first order multiples - Radon - Shperic Divergence
 
 time = 0:dt:tmax;
 
 % Plotting the trace
-trace_1 = radon_p1_fst_mul_div(:, 22);
+trace_1 = radon_p1p2_fst_prim_div_offset(:, 22);
 
 figure(1)
 plot(time, trace_1)
@@ -45,7 +45,8 @@ sample_gain = target./circshift(target', prediction_step)';
 figure(4)
 plot(time(500+1:end), sample_gain(500+1:end), '-')
 legend('Gain betwen sample to predicted and filter input sample')
-xlim([0 1.5])
+ylim([-20 20])
+xlim([0.5 3])
 grid
 
 % We can see, that in this case, the sample gain changes over time, this
@@ -64,9 +65,9 @@ prediction_step = 100;
 
 gain = inv(train_matrix*train_matrix')*train_matrix*target'
 
-[mesh_x, mesh_y] = meshgrid(-4:0.2:4, -4:0.2:4);
-mesh_x = mesh_x*1e-5;
-mesh_y = mesh_y*1e-5;
+[mesh_x, mesh_y] = meshgrid(-3:0.2:3, -3:0.2:3);
+mesh_x = mesh_x*1e-6;
+mesh_y = mesh_y*1e-6;
 regression_plan = [mesh_x(:), mesh_y(:)]*gain;
 regression_plan = reshape(regression_plan, size(mesh_x));
 
@@ -88,10 +89,13 @@ view(30, 18);
 grid
 
 
-
 %% Polinomial regression
 
 % We can try use a polynomial instead of a linear regression
+filter_one_len = 1;
+prediction_step = 100;
+
+[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
 
 const = 0;
 kernel_poly_matrix = (train_matrix'*train_matrix+const).^2;
@@ -121,7 +125,7 @@ grid
 idx = 501:601;
 
 figure(8)
-for i = 1
+for i = 1:5
   plot(train_matrix(idx+(i-1)*100), target(idx+(i-1)*100),'.-')
   hold on
 end

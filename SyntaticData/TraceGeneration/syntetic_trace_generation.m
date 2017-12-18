@@ -165,7 +165,6 @@ trace_p1_fst_multiples_div = spheric_divergence(time, offsets, v1(1), trace_p1_f
 
 trace_p1_fst_primaries_div_time = spheric_divergence(time, offsets, v1(1), trace_p1_fst_primaries_time);
 trace_p1_fst_multiples_div_time = spheric_divergence(time, offsets, v1(1), trace_p1_fst_multiples_time);
-%TODO -> Finishing add a time version, compare the two version more closely
 
 % Second primary traces
 v2 = 1650*ones(length(h),1);
@@ -286,6 +285,20 @@ xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
 grid
 
+% Case 8 - P1 and P2 only primaries
+trace_p1p2_fst_primaries = trace_p1_fst_primaries + trace_p2_fst_primaries;
+trace_p1p2_fst_primaries_div = trace_p1_fst_primaries_div + trace_p2_fst_primaries_div;
+
+trace_p1p2_fst_primaries_time = trace_p1_fst_primaries_time + trace_p2_fst_primaries_time;
+trace_p1p2_fst_primaries_div_time = trace_p1_fst_primaries_div_time + trace_p2_fst_primaries_div;
+
+figure(14)
+wiggle(trace_p1p2_fst_primaries)
+title('Primaries 1, 2 primaries')
+xlim([0 wiggle_xlimit])
+ylim([0 wiggle_ylimit])
+grid
+
 %% Traces in Radon domain
 flow = 3;
 fhigh = 80;
@@ -301,7 +314,7 @@ inverse_radon_freq_res = @(trace, h) inverse_radon_freq(trace, dt, h, q, radon_t
 radon_p1_fst_prim_div = inverse_radon_freq_res(trace_p1_fst_primaries_div, h);
 radon_p1_fst_prim_div_offset = inverse_radon_freq_res(trace_p1_fst_primaries_div(:, 31:end), h_ofsset150m);
 
-figure(14)
+figure(15)
 wiggle(radon_p1_fst_prim_div)
 title('Primaries 1 - Radon Domain')
 xlim([0 wiggle_xlimit])
@@ -312,7 +325,7 @@ grid
 radon_p1_fst_mul_div = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div, h);
 radon_p1_fst_mul_div_offset = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(15)
+figure(16)
 wiggle(radon_p1_fst_mul_div)
 title('Primaries 1 and first order multiples - Radon Domain')
 xlim([0 wiggle_xlimit])
@@ -323,7 +336,7 @@ grid
 radon_p2_fst_prim_div = inverse_radon_freq_res(trace_p2_fst_primaries_div, h);
 radon_p2_fst_prim_div_offset = inverse_radon_freq_res(trace_p2_fst_primaries_div(:, 31:end), h_ofsset150m);
 
-figure(16)
+figure(17)
 wiggle(radon_p2_fst_prim_div)
 title('Primaries 2 - Radon Domain')
 xlim([0 wiggle_xlimit])
@@ -334,7 +347,7 @@ grid
 radon_p2_fst_mul_div = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div, h);
 radon_p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(17)
+figure(18)
 wiggle(radon_p2_fst_mul_div)
 title('Primaries 2 and fisrt order multiples - Radon Domain')
 xlim([0 wiggle_xlimit])
@@ -345,7 +358,7 @@ grid
 radon_p1p2_fst_mul_div = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div, h);
 radon_p1p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(17)
+figure(19)
 wiggle(radon_p1p2_fst_mul_div)
 title('P1 and P2 fisrt order multiples - Radon Domain')
 xlim([0 wiggle_xlimit])
@@ -356,7 +369,7 @@ grid
 radon_p2_sec_mul_div = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div, h);
 radon_p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(18)
+figure(19)
 wiggle(radon_p2_sec_mul_div)
 title('P2 second order multiples - Radon Domain')
 xlim([0 wiggle_xlimit])
@@ -367,9 +380,20 @@ grid
 radon_p1p2_sec_mul_div = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div, h);
 radon_p1p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(19)
+figure(20)
 wiggle(radon_p1p2_sec_mul_div)
 title('P1 and P2 second order multiples - Radon Domain')
+xlim([0 wiggle_xlimit])
+ylim([0 wiggle_ylimit])
+grid
+
+% Case 8 - P1 and P2 primries
+radon_p1p2_primaries_div = inverse_radon_freq_res(trace_p1p2_fst_primaries_div, h);
+radon_p1p2_primaries_div_offset = inverse_radon_freq_res(trace_p1p2_fst_primaries_div(:, 31:end), h_ofsset150m);
+
+figure(21)
+wiggle(radon_p1p2_primaries_div)
+title('P1 and P2 primaries - Radon Domain')
 xlim([0 wiggle_xlimit])
 ylim([0 wiggle_ylimit])
 grid
@@ -381,7 +405,8 @@ save('tracos_in_time', 'trace_p1_fst_primaries_div'       , 'trace_p1_fst_prim_m
                        'trace_p2_fst_prim_multiples_div'  , 'trace_p2_fst_prim_multiples'  , ...
                        'trace_p1p2_fst_prim_multiples_div', 'trace_p1p2_fst_prim_multiples', ...
                        'trace_p2_sec_prim_multiples_div'  , 'trace_p2_sec_prim_multiples'  , ...
-                       'trace_p1p2_sec_prim_multiples_div', 'trace_p1p2_sec_prim_multiples');
+                       'trace_p1p2_sec_prim_multiples_div', 'trace_p1p2_sec_prim_multiples', ...
+                       'trace_p1p2_fst_primaries_div'     , 'trace_p1p2_fst_primaries');
 
 save('tracos_in_time_ideal', 'trace_p1_fst_primaries_div_time'       , 'trace_p1_fst_prim_multiples_time'  , ...
                              'trace_p1_fst_prim_multiples_div_time'  , 'trace_p1_fst_prim_multiples_time'  , ...
@@ -389,15 +414,17 @@ save('tracos_in_time_ideal', 'trace_p1_fst_primaries_div_time'       , 'trace_p1
                              'trace_p2_fst_prim_multiples_div_time'  , 'trace_p2_fst_prim_multiples_time'  , ...
                              'trace_p1p2_fst_prim_multiples_div_time', 'trace_p1p2_fst_prim_multiples_time', ...
                              'trace_p2_sec_prim_multiples_div_time'  , 'trace_p2_sec_prim_multiples_time'  , ...
-                             'trace_p1p2_sec_prim_multiples_div_time', 'trace_p1p2_sec_prim_multiples_time');
+                             'trace_p1p2_sec_prim_multiples_div_time', 'trace_p1p2_sec_prim_multiples_time', ...
+                             'trace_p1p2_fst_primaries_div_time'     , 'trace_p1p2_fst_primaries_time');
 
-save('tracos_in_radon', 'radon_p1_fst_prim_div' , 'radon_p1_fst_prim_div_offset'  , ...
-                        'radon_p1_fst_mul_div'  , 'radon_p1_fst_mul_div_offset'   , ...
-                        'radon_p2_fst_prim_div' , 'radon_p2_fst_prim_div_offset'  , ...
-                        'radon_p2_fst_mul_div'  , 'radon_p2_fst_mul_div_offset'   , ...
-                        'radon_p1p2_fst_mul_div', 'radon_p1p2_fst_mul_div_offset' , ...
-                        'radon_p2_sec_mul_div'  , 'radon_p2_sec_mul_div_offset'   , ...
-                        'radon_p1p2_sec_mul_div', 'radon_p1p2_sec_mul_div_offset');
+save('tracos_in_radon', 'radon_p1_fst_prim_div'   , 'radon_p1_fst_prim_div_offset'   , ...
+                        'radon_p1_fst_mul_div'    , 'radon_p1_fst_mul_div_offset'    , ...
+                        'radon_p2_fst_prim_div'   , 'radon_p2_fst_prim_div_offset'   , ...
+                        'radon_p2_fst_mul_div'    , 'radon_p2_fst_mul_div_offset'    , ...
+                        'radon_p1p2_fst_mul_div'  , 'radon_p1p2_fst_mul_div_offset'  , ...
+                        'radon_p2_sec_mul_div'    , 'radon_p2_sec_mul_div_offset'    , ...
+                        'radon_p1p2_sec_mul_div'  , 'radon_p1p2_sec_mul_div_offset'  , ...
+                        'radon_p1p2_primaries_div', 'radon_p1p2_primaries_div_offset');
 
 save('parameter', 'dt', 'tmax', 'reflextions_number', 'f', 'h', 'SNR', ...
                   'coef_ref_water', 't0_water', 't0_p1', 'p1_amp'    , ...

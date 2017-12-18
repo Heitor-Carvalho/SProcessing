@@ -1,30 +1,41 @@
 %% Normal vector Hello!
 
-% Let's define some line:
-line1 = [0, 1; 
-         0, 9];
+clear all
+clc 
 
-line2 = [0, 1;
-         0, 1];
+% Let's define some line:
+line1.v = [1, 2];
+line1.p = [1, 1];
 
 % Test point
-p = [0.34 -0.59]';
+p = [3, 4];
 
-[normal_vector1, point_projection1, dist1] = get_normal_vector(p, line1);
-[normal_vector2, point_projection2, dist2] = get_normal_vector(p, line2);
+% Plotting lines and point
+range = -1:0.1:4;
+line_arr_1 = get_line_range(range, line1);
 
-range = -1:0.1:1;
-line_y_1 = get_line_range(range, line1);
-line_y_2 = get_line_range(range, line2);
-normal_vector_tip1 = p - normal_vector1;
-normal_vector_tip2 = p - normal_vector2;
+[normal_vector, projection, dist] = get_normal_vector(p, line1)
+projection_end = projection.v + projection.p;
+normal_vector_end = normal_vector.v + normal_vector.p;
 
 figure(1)
-plot(range, line_y_1, 'b', range, line_y_2, 'r')
+plot(line_arr_1(:, 1), line_arr_1(:, 2), 'b')
 hold on
-plot(p(1), p(2), 'o', point_projection1(1), point_projection1(2), '*', point_projection2(1), point_projection2(2), '*')
-plot([p(1), normal_vector_tip1(1)], [p(2) normal_vector_tip1(2)],'--b')
-plot([p(1), normal_vector_tip2(1)], [p(2) normal_vector_tip2(2)],'--r')
-xlim([min(range) max(range)])
-ylim([min(range) max(range)])
+plot(p(1), p(2), 'k*')
+plot([projection.p(1), projection_end(1)], [projection.p(2), projection_end(2)], '--g^') 
+plot([normal_vector.p(1), normal_vector_end(1)], [normal_vector.p(2), normal_vector_end(2)],'--m^') 
+xlim([0 6])
+ylim([0 6])
 grid
+
+% In this code, a line is defined as a vector on top of a point
+line1.p = [0, 2];
+line_arr_1_shfited = get_line_range(range, line1);
+figure(2)
+plot(line_arr_1(:, 1), line_arr_1(:, 2), 'b')
+hold on
+plot(line_arr_1_shfited(:, 1), line_arr_1_shfited(:, 2), 'b')
+xlim([0 6])
+ylim([0 6])
+grid
+
