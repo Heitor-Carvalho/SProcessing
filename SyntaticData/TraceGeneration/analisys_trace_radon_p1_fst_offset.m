@@ -13,26 +13,31 @@ load('CaseData1_0/parameter');
 
 % Ploting filtered trace and reference trace
 
-trace_nb = 10;
+trace_nb = 1;
 attenuation_factor = 1;
 samples_start = 1;
+time = 0:dt:tmax;
 
 traces_matrix = radon_p1_fst_mul_div_offset;
 traces_matrix_prim = radon_p1_fst_prim_div_offset;
+
+trace_nb = 31;
 
 % Nomalizing data
 test_trace = trace_pre_processing(traces_matrix, trace_nb, samples_start, attenuation_factor);
 reference_test_trace = trace_pre_processing(traces_matrix_prim, trace_nb, samples_start, attenuation_factor);
 
-trace_nb = 22;
 xlim_plot = 1000;
 
 figure(1)
-plot(test_trace)
+plot(time, test_trace, '--r')
 hold on
-plot(reference_test_trace)
-legend('Primaries and multiples', 'Primary P1')
-xlim([0 1000])
+plot(time, reference_test_trace, 'b')
+% legend('Primaries and multiples', 'Primary P1')
+ylabel('Normalized Amplitude')
+xlabel('\tau [s]')
+xlim([0 time(1000)])
+set(gca, 'FontSize', 12)
 grid
 
 %% Trace autocorrelation
@@ -46,20 +51,23 @@ grid
 
 %% FIR filter
 
-filter_one_len = 10;
-prediction_step = 100;
+filter_one_len = 60;
+prediction_step = 86;
 
 [train_matrix, target] = trace_to_datatraining(test_trace, filter_one_len, prediction_step);
 
 gain = inv(train_matrix*train_matrix')*train_matrix*target'
 
 figure(3)
-plot(target, '--')
+plot(time, target, '--r')
 hold on
-plot(target - gain'*train_matrix)
-title('FIR - Filter')
-legend('Primaries and multiples', 'Primary recovered')
-xlim([0 1000])
+plot(time, target - gain'*train_matrix, 'b')
+% title('FIR - Filter')
+% legend('Primaries and multiples', 'Primary recovered')
+ylabel('Normalized Amplitude')
+xlabel('\tau [s]')
+xlim([0 time(1000)])
+set(gca, 'FontSize', 12)
 grid
 
 %% ELM - Prediction step 
@@ -110,7 +118,7 @@ filter_one_len = 15;
 mid_layer_sz = 56;
 regularization = 0;
 initial_weigths_amp = 0.1;
-prediction_step = 90;
+prediction_step = 86;
 
 [train_set, target] = trace_to_datatraining(test_trace, filter_one_len, prediction_step);
 
@@ -129,18 +137,21 @@ nn.w = calc_elm_weigths(train_set, target, regularization, nn)';
 % Neural network prediction
 predicted_trace = neural_nete(train_set, nn);
 
-mse(i) = mean((predicted_trace - target).^2);
-mse_p(i) = mean((target - predicted_trace - reference_test_trace').^2);
+mse = mean((predicted_trace - target).^2);
+mse_p = mean((target - predicted_trace - reference_test_trace').^2);
 
 % Plotting ELM - Results
 
 figure(6)
-plot(target, '--')
+plot(time, target, '--r')
 hold on
-plot(target - predicted_trace)
-title('ELM')
-legend('Primaries and multiples', 'Primary recovered')
-xlim([0 1000])
+plot(time, target - predicted_trace, 'b')
+% title('ELM')
+% legend('Primaries and multiples', 'Primary recovered')
+ylabel('Normalized Amplitude')
+xlabel('\tau [s]')
+xlim([0 time(1000)])
+set(gca, 'FontSize', 12)
 grid
 
 figure(7)
@@ -204,11 +215,11 @@ grid
 %% ESN
 
 prediction_step = 80;
-filter_one_len = 15;   
+filter_one_len = 22;   
 mid_layer_sz = 51;
-regularization = 1e-6;
+regularization = 1e-8;
 initial_weigths_amp = 0.1;
-spectral_radio = 0.99;
+spectral_radio = 0.97;
 
 [train_set, target] = trace_to_datatraining(test_trace, filter_one_len, prediction_step);
 
@@ -237,13 +248,15 @@ mse_p = mean((target - predicted_trace - reference_test_trace').^2);
 
 % Plotting ESN - Results
 figure(10)
-plot(target, '--')
+plot(time, target, '--r')
 hold on
-plot(target - predicted_trace,'b')
-plot(reference_test_trace, 'm')
-title('ESN')
-legend('Primaries and multiples', 'Primary recovered', 'Reference trace (Only primaries)')
-xlim([0 800])
+plot(time, target - predicted_trace,'b')
+% title('ESN')
+% legend('Primaries and multiples', 'Primary recovered', 'Reference trace (Only primaries)')
+ylabel('Normalized Amplitude')
+xlabel('\tau [s]')
+xlim([0 time(1000)])
+set(gca, 'FontSize', 12)
 grid
 
 figure(11)

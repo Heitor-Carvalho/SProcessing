@@ -13,7 +13,7 @@ time = 0:dt:tmax;
 trace_1 = trace_p2_sec_prim_multiples_time(:, 1);
 
 figure(1)
-plot(time, trace_1)
+plot(trace_1)
 grid
 
 %% Getting the traning data (Matrix used in regression)
@@ -100,6 +100,118 @@ grid
 % This suggest to aproach to the problem:
 % 1 - Use a structure we time variyng parameters or recorrent structure
 % 2 - Use a many feedfoward structure ajusted simultaneously
+
+
+%% GMM
+rng(1);
+end_process = 801;
+
+filter_one_len = 1;
+prediction_step = 100;
+
+[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
+
+data_set = [train_matrix; target]';
+data_set(end_process:end, :) = [];
+
+init_gues = 2*ones(size(data_set,1), 1);
+init_gues(300:400) = 1;
+init_gues(setxor(300:400, 1:length(init_gues))) = 2;
+
+gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-7);
+
+figure(12)
+h = ezcontour(@(x,y)pdf(gm,[x y]),[-1 1],[-1 1], 800);
+hold on
+plot(train_matrix(1:end_process), target(1:end_process),'.')
+grid
+
+posterior = gm.posterior(data_set);
+
+figure(13)
+plot(target(1:800))
+hold on
+plot(posterior(:, 1))
+legend('Trace', 'Probability of been a primary')
+grid
+
+figure(14)
+plot(target(1:800))
+hold on
+plot(posterior(:, 2))
+legend('Trace', 'Probability of been a multiple')
+grid
+
+%%
+
+tg = target(1:800);
+tg(posterior(:, 1) < 0.5) = 0;
+figure(15)
+plot(tg)
+legend('Trace with probability of primarie higher than 0.5')
+grid
+
+tg = target(1:800);
+tg(posterior(:, 2) < 0.5) = 0;
+figure(16)
+plot(tg)
+legend('Trace with probability of primarie higher than 0.5')
+grid
+
+%% TMM
+
+number_of_components = 2;
+idxp = 300:400;
+mix_prob = [0.5 0.5];
+mix_cov = zeros(size(data_set, 2), size(data_set, 2), number_of_components);
+mix_cov(:,:,1) = cov(data_set(idxp, :));
+mix_cov(:,:,2) = cov(data_set(setxor(idxp, 1:size(data_set, 1)), :));
+mix_mean = zeros(1, size(data_set, 2), number_of_components);
+mix_mean(:,:,1) = mean(data_set(300:400, :));
+mix_mean(:,:,2) = mean(data_set(setxor(300:400, 1:size(data_set, 1))));
+v = 1e3;
+
+max_it = 5e4;
+[mix_prob, mix_cov, mix_mean] = tstudentmm_em(data_set, mix_prob, mix_cov, mix_mean, v, 1e-9, max_it);
+
+[posterior_prob, posterior] = tstudentmm_posterior(data_set, mix_prob, mix_cov, mix_mean, v);
+post_func = @(x, y) tstudentmm_pdf([x, y], mix_prob, mix_cov, mix_mean, v);
+
+figure(17)
+h = ezcontour(post_func,[-1 1],[-1 1], 800);
+hold on
+plot(train_matrix(1:end_process), target(1:end_process),'.')
+grid
+
+figure(18)
+plot(target(1:800))
+hold on
+plot(posterior_prob(:, 1))
+legend('Trace', 'Probability of been a primary')
+grid
+
+figure(19)
+plot(target(1:800))
+hold on
+plot(posterior_prob(:, 2))
+legend('Trace', 'Probability of been a multiple')
+grid
+
+%%
+
+tg = target(1:800);
+tg(posterior(:, 1) < 0.5) = 0;
+figure(15)
+plot(tg)
+legend('Trace with probability of primarie higher than 0.5')
+grid
+
+tg = target(1:800);
+tg(posterior(:, 2) < 0.5) = 0;
+figure(16)
+plot(tg)
+legend('Trace with probability of primarie higher than 0.5')
+grid
 
 
 %%

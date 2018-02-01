@@ -1,4 +1,4 @@
-function [S,tau,v] = velan(d,dt,h,vmin,vmax,nv,R,L);
+function [Snorm, S, S1, S2, tau,v] = velan(d,dt,h,vmin,vmax,nv,R,L);
 %VELAN: A program to compute velocity spectra.
 % 
 %  [S,tau,v] = velan(d,dt,h,vmin,vmav,nv,R,L);
@@ -50,6 +50,10 @@ function [S,tau,v] = velan(d,dt,h,vmin,vmax,nv,R,L);
   taper = hamming(2*L+1);
   H = hamming(2*L+1)*ones(nh,1)';
 
+  S = zeros(ntau, nv);
+  S1 = zeros(ntau, nv);
+  S2 = zeros(ntau, nv);
+
   for it = 1:ntau
   for iv = 1:nv  
 
@@ -78,11 +82,13 @@ function [S,tau,v] = velan(d,dt,h,vmin,vmax,nv,R,L);
    s1  = sum( (sum(s,2)).^2);
    s2  = sum( sum(s.^2));
    S(it,iv) = abs(s1-s2);
-
+   S1(it,iv) = s1;
+   S2(it,iv) = s2;
+   
   end
   end
 
- S = S/max(max(S));
+ Snorm = S/max(max(S));
 
  return;
     

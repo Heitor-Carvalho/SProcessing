@@ -102,5 +102,55 @@ grid
 % 2 - Use a many feedfoward structure ajusted simultaneously
 
 
+%% GMM
+rng(10);
+
+% Normalizing trace 
+trace_1_norm = trace_normalization(trace_1);
+trace_1_norm = trace_1_norm/max(trace_1_norm);
+[train_matrix, target] = trace_to_datatraining(trace_1_norm, filter_one_len, prediction_step);
+
+end_process = 801;
+low_energy_idx = abs(target(1:end_process-1).^2) < 1e-3;
+
+data_set = [train_matrix; target]';
+data_set(end_process:end, :) = [];
+
+init_gues = zeros(size(data_set,1), 1);
+init_gues(50:150) = 1;
+init_gues(151:end) = 2;
+init_gues(low_energy_idx(1:end_process-1)) = 3;
+
+gm = fitgmdist(data_set, 3, 'Start', init_gues, 'RegularizationValue', 1e-6);
+
+figure(10)
+h = ezcontour(@(x,y)pdf(gm,[x y]), [-1 1], [-1 1], 1e3);
+hold on
+plot(train_matrix(1:end_process), target(1:end_process),'.')
+grid
+
+posterior = gm.posterior(data_set);
+
+figure(11)
+plot(target(1:800))
+hold on
+plot(posterior(:, 1))
+legend('Trace', 'Probability of been a primary')
+grid
+
+figure(12)
+plot(target(1:800))
+hold on
+plot(posterior(:, 2))
+legend('Trace', 'Probability of been a multiple')
+grid
+
+figure(13)
+plot(target(1:800))
+hold on
+plot(posterior(:, 3))
+legend('Trace', 'Probability of low energy')
+grid
+
 %%
 close all
