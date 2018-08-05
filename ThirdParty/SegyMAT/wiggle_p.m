@@ -47,7 +47,7 @@
 %
 %
 
-function wiggle(x,t,Data,style,dmax,showmax,plImage,imageax,ax_order,lineColor,example_plot);
+function wiggle_p(x,t,Data,style,dmax,showmax,plImage,imageax,ax_order,lineColor,example_plot);
 
 is_hold_on = ishold;
 

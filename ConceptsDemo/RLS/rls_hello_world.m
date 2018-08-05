@@ -1,4 +1,5 @@
 %% RLS - Hello World
+% Run this script with Publish utility
 clear all
 clc
 
@@ -57,6 +58,7 @@ figure(3)
 plot(x, y)
 hold on
 plot(x, y_est, '--.')
+title('Lambda 1')
 grid
 
 %% RLS algorithm - Lambda = 0.9
@@ -70,4 +72,22 @@ figure(4)
 plot(x, y)
 hold on
 plot(x, y_est, '--.')
+title('Lambda 0.9')
 grid
+
+%% RLS algorithm - Lambda = 0.9
+
+lambda = 0.7;
+[y_est, w, ~] = rls(x, y, init_cov_matrix, w0, lambda);
+    
+%% Plotting solutions
+
+figure(5)
+plot(x, y)
+hold on
+plot(x, y_est, '--.')
+title('Lambda 0.7')
+grid
+
+%%
+close all

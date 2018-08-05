@@ -65,10 +65,35 @@ legend('Primaries and multiples', 'Primary recovered', 'Reference trace (Only pr
 xlim([0 800])
 grid
 
+%% FIR - Double gate 
+
+filter_one_len = 15;
+prediction_step_1 = 100;
+prediction_step_2 = 200;
+
+[train_matrix_1, target_1] = trace_to_datatraining(test_trace, filter_one_len, prediction_step_1);
+[train_matrix_2, target_2] = trace_to_datatraining(test_trace, filter_one_len, prediction_step_2);
+
+train_matrix = [train_matrix_1; train_matrix_2];
+target = [target_1+target_2];
+
+gain = inv(train_matrix*train_matrix')*train_matrix*target';
+
+figure(333)
+plot(target/2, 'k')
+hold on
+plot(target/2 - gain'*train_matrix/2, 'b')
+plot(reference_test_trace, '--m')
+title('Double gate FIR - Filter')
+legend('Primaries and multiples', 'Primary recovered', 'Reference trace (Only primaries)')
+xlim([0 800])
+grid
+
+
 %% ELM 
 
 prediction_step = 99;
-filter_one_len = 2;   
+filter_one_len = 10;   
 mid_layer_sz = 35;
 regularization = 0;
 initial_weigths_amp = 0.1;
@@ -110,6 +135,57 @@ plot3(train_set(1, :), train_set(2, :), target, '--')
 hold on
 plot3(train_set(1, :), train_set(2, :), predicted_trace)
 title('ELM - Regression space')
+grid
+
+%% ELM - Double Gate
+
+prediction_step = 99;
+filter_one_len = 10;   
+mid_layer_sz = 35;
+regularization = 0;
+initial_weigths_amp = 0.1;
+
+[train_set_1, target_1] = trace_to_datatraining(test_trace, filter_one_len, prediction_step);
+[train_set_2, target_2] = trace_to_datatraining(test_trace, filter_one_len, 2*prediction_step);
+
+train_set = [train_set_1; train_set_2];
+target = target_1 + target_2;
+
+% Neural network setup
+clear nn
+in_sz = filter_one_len*2;
+out_sz = 1;
+nn.func = @tanh;
+nn.b = 0;
+
+% Calculating extreme learning machines values
+nn.v = initial_weigths_amp*(rand(in_sz+1, mid_layer_sz));
+nn = neuro_net_init(nn);
+nn.w = calc_elm_weigths(train_set, target, regularization, nn)';
+
+% Neural network prediction
+predicted_trace = neural_nete(train_set, nn);
+
+mse = mean((predicted_trace - target).^2);
+mse_p = mean((target - predicted_trace - reference_test_trace').^2);
+
+% Plotting ELM - Results
+
+figure(41)
+plot(target/2, '--')
+hold on
+plot(target/2 - predicted_trace/2,'b')
+plot(reference_test_trace, 'm')
+title('Double gate - ELM')
+legend('Primaries and multiples', 'Primary recovered', 'Reference trace (Only primaries)')
+xlim([0 800])
+grid
+
+figure(51)
+plot3(train_set(1, :), train_set(2, :), target, '--')
+hold on
+plot3(train_set(1, :), train_set(2, :), predicted_trace)
+title('Double Gate - ELM - Regression space')
 grid
 
 %%  FIR adaptative - RLS
@@ -192,124 +268,13 @@ title('ESN - Regression space')
 grid
 
 %% GMM
-rng(10);
-
-prediction_step = 100;
-filter_one_len = 6;
-[train_matrix, target] = trace_to_datatraining(test_trace, filter_one_len, prediction_step);
-
-
-number_of_components = 2;
-
 end_process = 801;
-low_energy_idx = abs(target(1:end_process-1).^2) < 1e-4;
-
 data_set = [train_matrix; target]';
 data_set(end_process:end, :) = [];
-
 idxp = 108:180;
-idxp2 = 338:379;
-
-mix_prob = [0.3 0.7];
-mix_cov = zeros(size(data_set, 2), size(data_set, 2), number_of_components);
-mix_cov(:,:,1) = cov(data_set(idxp, :));
-mix_cov(:,:,2) = cov(data_set(setxor(idxp, 1:size(data_set, 1)), :));
-mix_mean = zeros(1, size(data_set, 2), number_of_components);
-mix_mean(:,:,1) = mean(data_set(idxp, :));
-mix_mean(:,:,2) = mean(data_set(setxor(idxp, 1:size(data_set, 1)), :));
-v = 1;
-
-max_it = 1e5;
-% [mix_prob, mix_cov, mix_mean] = gmm_em(data_set, mix_prob, mix_cov, mix_mean, 1e-8, max_it);
-[mix_prob, mix_cov, mix_mean] = tstudentmm_em(data_set, mix_prob, mix_cov, mix_mean, v, 1e-8, max_it);
-%%
-
-  for i = 1:number_of_components
-    mix_cov(:, :, i)  = mix_cov(:, :, i) + 1e-11*eye(size(mix_cov(:, :, i)));
-  end 
-
-[posterior_prob, posterior] = tstudentmm_posterior(data_set, mix_prob, mix_cov, mix_mean, v);
-% [posterior_prob, posterior] = gmm_posterior(data_set, mix_prob, mix_cov, mix_mean);
-
-
-figure(19)
-plot(target(1:800))
-hold on
-plot(posterior_prob(:, 1))
-legend('Trace', 'Probability of been a primary')
-grid
-
-figure(20)
-plot(target(1:800))
-hold on
-plot(posterior_prob(:, 2))
-legend('Trace', 'Probability of been a multiple')
-grid
-%%
-figure(23)
-tgp = target(1:800);
-tgp(posterior_prob(:, 1) < 0.5) = 0;
-plot(tgp)
-grid
-
-%%
-figure(24)
-tgm = target(1:800);
-tgm(posterior_prob(:, 2) < 0.5) = 0;
-plot(tgm)
-grid
-%%
-
-Wp = diag(posterior_prob(:, 1));
-% Wp = diag(posterior_prob(:, 1) > 0.5);
-WWp = data_set(:, 1:end-1)'*Wp*data_set(:, 1:end-1);
-
-W = diag(posterior_prob(:, 2));
-% W = diag(posterior_prob(:, 2) > 0.5);
-WW = data_set(:, 1:end-1)'*W*data_set(:, 1:end-1);
-
-% reg_p = 0;
-reg_m = 0;
-gain_prim = inv(WWp + reg_p*eye(size(WWp)))*data_set(:, 1:end-1)'*Wp*target(1:end_process-1)';
-gain_multiple = pinv(WW + reg_m*eye(size(WW)))*data_set(:, 1:end-1)'*W*target(1:end_process-1)';
-
-%%
-figure(25)
-plot3(data_set(:, 1), data_set(:, 2), target(1:end_process-1))
-hold on
-plot3(data_set(idxp, 1), data_set(idxp, 2), target(idxp), '--r', 'LineWidth', 2.5)
-plot3(data_set(idxp2, 1), data_set(idxp2, 2), target(idxp2), '--g', 'LineWidth', 2.5)
-grid on
-%%
-figure(21)
-plot(target(1:800))
-hold on
-plot(gain_multiple'*data_set(:, 1:end-1)', '--r')
-ylim([-2 1])
-grid
-%%
-figure(22)
-plot(target(1:800))
-hold on
-% plot(target(1:800) - gain_multiple'*data_set(:, 1:end-1)', '--m')
-plot(gain_prim'*data_set(:, 1:end-1)', 'r--')
-grid
-% plot(target(1:800))
-% hold on
-% plot(posterior(:, 3))
-% legend('Trace', 'Probability of been a low energy')
-% grid
-
-
-
-%%
-gm = fitgmdist(data_set, 3, 'Start', init_gues, 'RegularizationValue', 1e-6);
-
-figure(11)
-h = ezcontour(@(x,y)pdf(gm,[x y]), [-1 1], [-1 1], 1e3);
-hold on
-plot(train_matrix(1:end_process), target(1:end_process),'.')
-grid
+init_guess = 2*ones(size(data_set,1), 1);
+init_guess(idxp) = 1;
+gm = fitgmdist(data_set, 2, 'Start', init_guess, 'RegularizationValue', 1e-6);
 
 posterior = gm.posterior(data_set);
 
@@ -325,20 +290,18 @@ figure(13)
 plot(target(1:800))
 hold on
 plot(posterior(:, 2))
-plot(target(1:800))
-hold on
-plot(posterior(:, 1))
 plot(reference_test_trace(1:800))
-legend('Trace', 'Probability of been a primary', 'Reference primary')
-grid
-legend('Trace', 'Probability of been a multiple')
+legend('Trace', 'Probability of been a multiple', 'Reference primary')
 grid
 
+%% GMM - filtered trace
+
+target_prim = target;
+target_prim(posterior(:, 1) < 0.5) = 0;
+
 figure(14)
-plot(target(1:800))
-hold on
-plot(posterior(:, 3))
-legend('Trace', 'Probability of low energy')
+plot(target_prim(1:800))
+legend('Trace', 'Filtered primary')
 grid
 
 %%

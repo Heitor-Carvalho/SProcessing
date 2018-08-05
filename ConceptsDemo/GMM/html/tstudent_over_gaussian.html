@@ -1,0 +1,356 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>tstudent_over_gaussian</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-08-05"><meta name="DC.source" content="tstudent_over_gaussian.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Let's generate a data with some data with outlier!</a></li><li><a href="#2">Fitting a Gaussian - Non outliear data</a></li><li><a href="#3">Fitting a Gaussian - Outliear data</a></li><li><a href="#4">Plotting the result!</a></li><li><a href="#5">Fitting a T Student - Non outliear data</a></li><li><a href="#6">Fitting a T Student - Outliear data</a></li><li><a href="#7">Plotting the result!</a></li></ul></div><h2>Let's generate a data with some data with outlier!<a name="1"></a></h2><pre class="codeinput">clear <span class="string">all</span>
+
+rng(4)
+
+x = -3:0.1:3;
+y = x + 0.3*randn(size(x));
+
+<span class="comment">% Let's add some outliers</span>
+outliers_nb = 5;
+
+idx = randperm(length(x));
+
+y_outlier = y;
+y_outlier(idx(1:outliers_nb)) =  y(idx(1:outliers_nb)) + 3*sign(randn(size(idx(1:outliers_nb))));
+
+figure(1)
+plot(x, y_outlier, <span class="string">'.'</span>)
+hold <span class="string">on</span>
+plot(x(idx(1:outliers_nb)), y_outlier(idx(1:outliers_nb)), <span class="string">'ro'</span>)
+legend(<span class="string">'Points'</span>, <span class="string">'Outliers'</span>)
+grid
+
+train_set = [x', y'];
+train_set_outlier = [x', y_outlier'];
+</pre><img vspace="5" hspace="5" src="tstudent_over_gaussian_01.png" alt=""> <h2>Fitting a Gaussian - Non outliear data<a name="2"></a></h2><pre class="codeinput">number_of_components = 1;
+mix_mean = zeros(1, 2, number_of_components);
+mix_mean(:, :, 1) = 0;
+mix_prob = 1;
+mix_cov = zeros(size(train_set, 2), size(train_set, 2), number_of_components);
+mix_cov(:, :, 1) = cov(train_set);
+
+[mix_prob, mix_cov, mix_mean] = gmm_em(train_set, mix_prob, mix_cov, mix_mean, 0, 1e3);
+</pre><h2>Fitting a Gaussian - Outliear data<a name="3"></a></h2><pre class="codeinput">number_of_components = 1;
+mix_mean_out = zeros(1, 2, number_of_components);
+mix_mean_out(:, :, 1) = 0;
+mix_prob_out = 1;
+mix_cov_out(:, :, 1) = cov(train_set);
+
+[mix_prob_out, mix_cov_out, mix_mean_out] = gmm_em(train_set_outlier, mix_prob_out, mix_cov_out, mix_mean_out, 0, 1e3);
+</pre><h2>Plotting the result!<a name="4"></a></h2><pre class="codeinput">[x_grid, y_grid] = meshgrid(-5:0.05:5);
+g_grid = [x_grid(:), y_grid(:)];
+
+mv_gaussian = 0;
+mv_gaussian_out = 0;
+<span class="keyword">for</span> i = 1:number_of_components
+  mv_gaussian = mv_gaussian + mix_prob(i)*mvgauss(g_grid, mix_mean(:, :, i), mix_cov(:, :, i));
+  mv_gaussian_out = mv_gaussian_out + mix_prob_out(i)*mvgauss(g_grid, mix_mean_out(:, :, i), mix_cov_out(:, :, i));
+<span class="keyword">end</span>
+mv_gaussian_grid = reshape(mv_gaussian, size(x_grid));
+mv_gaussian_grid_out = reshape(mv_gaussian_out, size(x_grid));
+
+[posterior_prob, posterior] = gmm_posterior(train_set, mix_prob, mix_cov, mix_mean);
+[posterior_prob_out, posterior_out] = gmm_posterior(train_set, mix_prob_out, mix_cov_out, mix_mean_out);
+
+figure(2)
+subplot(2, 1, 1)
+plot3(train_set(:, 1), train_set(:, 2), sum(posterior, 2),<span class="string">'.'</span>)
+hold <span class="string">on</span>
+mesh(x_grid, y_grid, mv_gaussian_grid)
+title(<span class="string">'Without outliers data'</span>)
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid <span class="string">on</span>
+subplot(2, 1, 2)
+plot3(train_set_outlier(:, 1), train_set_outlier(:, 2), sum(posterior_out, 2),<span class="string">'.'</span>)
+hold <span class="string">on</span>
+mesh(x_grid, y_grid, mv_gaussian_grid_out)
+title(<span class="string">'With outliers data'</span>)
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="tstudent_over_gaussian_02.png" alt=""> <h2>Fitting a T Student - Non outliear data<a name="5"></a></h2><pre class="codeinput">number_of_components = 1;
+mix_mean = zeros(1, 2, number_of_components);
+mix_mean(:, :, 1) = 0;
+mix_prob = 1;
+mix_cov(:, :, 1) = cov(train_set);
+v = 3;
+
+[mix_prob, mix_cov, mix_mean] = tstudentmm_em(train_set, mix_prob, mix_cov, mix_mean, v, 0, 1e3);
+</pre><h2>Fitting a T Student - Outliear data<a name="6"></a></h2><pre class="codeinput">number_of_components = 1;
+mix_mean_out = zeros(1, 2, number_of_components);
+mix_mean_out(:, :, 1) = 0;
+mix_prob_out = 1;
+mix_cov_out(:, :, 1) = cov(train_set);
+
+[mix_prob_out, mix_cov_out, mix_mean_out] = tstudentmm_em(train_set_outlier, mix_prob_out, mix_cov_out, mix_mean_out, v, 0, 1e3);
+</pre><h2>Plotting the result!<a name="7"></a></h2><pre class="codeinput">[x_grid, y_grid] = meshgrid(-5:0.05:5);
+g_grid = [x_grid(:), y_grid(:)];
+
+mv_tstudent = 0;
+mv_tstudent_out = 0;
+<span class="keyword">for</span> i = 1:number_of_components
+  g_grid_avg = g_grid - repmat(mix_mean(:, :, i), size(g_grid ,1), 1);
+
+  scale = sqrt(diag(mix_cov(:,:,i)))';
+  g_grid_scale = g_grid_avg./repmat(scale, size(g_grid,1), 1);
+
+  mv_tstudent = mv_tstudent + mix_prob(i)*mvtpdf(g_grid_scale, mix_cov(:, :, i), v);
+  mv_tstudent_out = mv_tstudent_out + mix_prob_out(i)*mvtpdf(g_grid_scale, mix_cov_out(:, :, i), v);
+
+<span class="keyword">end</span>
+mv_tstudent = mv_tstudent/prod(scale);
+mv_tstudent_out = mv_tstudent_out/prod(scale);
+mv_tstudent_grid = reshape(mv_tstudent, size(x_grid));
+mv_tstudent_grid_out = reshape(mv_tstudent_out, size(x_grid));
+
+[posterior_prob, posterior] = tstudentmm_posterior(train_set, mix_prob, mix_cov, mix_mean, v);
+[posterior_prob_out, posterior_out] = tstudentmm_posterior(train_set, mix_prob_out, mix_cov_out, mix_mean_out, v);
+
+figure(3)
+subplot(2, 1, 1)
+plot3(train_set(:, 1), train_set(:, 2), sum(posterior, 2),<span class="string">'.'</span>)
+hold <span class="string">on</span>
+mesh(x_grid, y_grid, mv_tstudent_grid)
+title(<span class="string">'Without outliers data'</span>)
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid <span class="string">on</span>
+subplot(2, 1, 2)
+plot3(train_set_outlier(:, 1), train_set_outlier(:, 2), sum(posterior_out, 2),<span class="string">'.'</span>)
+hold <span class="string">on</span>
+mesh(x_grid, y_grid, mv_tstudent_grid_out)
+title(<span class="string">'With outliers data'</span>)
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="tstudent_over_gaussian_03.png" alt=""> <pre class="codeinput">close <span class="string">all</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Let's generate a data with some data with outlier!
+
+clear all
+
+rng(4)
+
+x = -3:0.1:3;
+y = x + 0.3*randn(size(x));
+
+% Let's add some outliers 
+outliers_nb = 5;
+
+idx = randperm(length(x));
+
+y_outlier = y;
+y_outlier(idx(1:outliers_nb)) =  y(idx(1:outliers_nb)) + 3*sign(randn(size(idx(1:outliers_nb))));
+
+figure(1)
+plot(x, y_outlier, '.')
+hold on
+plot(x(idx(1:outliers_nb)), y_outlier(idx(1:outliers_nb)), 'ro')
+legend('Points', 'Outliers')
+grid
+
+train_set = [x', y'];
+train_set_outlier = [x', y_outlier'];
+
+%% Fitting a Gaussian - Non outliear data
+
+number_of_components = 1;
+mix_mean = zeros(1, 2, number_of_components);
+mix_mean(:, :, 1) = 0;
+mix_prob = 1;
+mix_cov = zeros(size(train_set, 2), size(train_set, 2), number_of_components);
+mix_cov(:, :, 1) = cov(train_set);
+
+[mix_prob, mix_cov, mix_mean] = gmm_em(train_set, mix_prob, mix_cov, mix_mean, 0, 1e3);
+
+%% Fitting a Gaussian - Outliear data
+
+number_of_components = 1;
+mix_mean_out = zeros(1, 2, number_of_components);
+mix_mean_out(:, :, 1) = 0;
+mix_prob_out = 1;
+mix_cov_out(:, :, 1) = cov(train_set);
+
+[mix_prob_out, mix_cov_out, mix_mean_out] = gmm_em(train_set_outlier, mix_prob_out, mix_cov_out, mix_mean_out, 0, 1e3);
+
+%% Plotting the result!
+
+[x_grid, y_grid] = meshgrid(-5:0.05:5);
+g_grid = [x_grid(:), y_grid(:)];
+
+mv_gaussian = 0;
+mv_gaussian_out = 0;
+for i = 1:number_of_components
+  mv_gaussian = mv_gaussian + mix_prob(i)*mvgauss(g_grid, mix_mean(:, :, i), mix_cov(:, :, i));
+  mv_gaussian_out = mv_gaussian_out + mix_prob_out(i)*mvgauss(g_grid, mix_mean_out(:, :, i), mix_cov_out(:, :, i));
+end
+mv_gaussian_grid = reshape(mv_gaussian, size(x_grid));
+mv_gaussian_grid_out = reshape(mv_gaussian_out, size(x_grid));
+
+[posterior_prob, posterior] = gmm_posterior(train_set, mix_prob, mix_cov, mix_mean);
+[posterior_prob_out, posterior_out] = gmm_posterior(train_set, mix_prob_out, mix_cov_out, mix_mean_out);
+
+figure(2)
+subplot(2, 1, 1)
+plot3(train_set(:, 1), train_set(:, 2), sum(posterior, 2),'.')
+hold on
+mesh(x_grid, y_grid, mv_gaussian_grid)
+title('Without outliers data')
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid on
+subplot(2, 1, 2)
+plot3(train_set_outlier(:, 1), train_set_outlier(:, 2), sum(posterior_out, 2),'.')
+hold on
+mesh(x_grid, y_grid, mv_gaussian_grid_out)
+title('With outliers data')
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid on
+
+%% Fitting a T Student - Non outliear data
+
+number_of_components = 1;
+mix_mean = zeros(1, 2, number_of_components);
+mix_mean(:, :, 1) = 0;
+mix_prob = 1;
+mix_cov(:, :, 1) = cov(train_set);
+v = 3;
+
+[mix_prob, mix_cov, mix_mean] = tstudentmm_em(train_set, mix_prob, mix_cov, mix_mean, v, 0, 1e3);
+
+%% Fitting a T Student - Outliear data
+
+number_of_components = 1;
+mix_mean_out = zeros(1, 2, number_of_components);
+mix_mean_out(:, :, 1) = 0;
+mix_prob_out = 1;
+mix_cov_out(:, :, 1) = cov(train_set);
+
+[mix_prob_out, mix_cov_out, mix_mean_out] = tstudentmm_em(train_set_outlier, mix_prob_out, mix_cov_out, mix_mean_out, v, 0, 1e3);
+
+%% Plotting the result!
+
+[x_grid, y_grid] = meshgrid(-5:0.05:5);
+g_grid = [x_grid(:), y_grid(:)];
+
+mv_tstudent = 0;
+mv_tstudent_out = 0;
+for i = 1:number_of_components
+  g_grid_avg = g_grid - repmat(mix_mean(:, :, i), size(g_grid ,1), 1);
+  
+  scale = sqrt(diag(mix_cov(:,:,i)))';
+  g_grid_scale = g_grid_avg./repmat(scale, size(g_grid,1), 1);
+
+  mv_tstudent = mv_tstudent + mix_prob(i)*mvtpdf(g_grid_scale, mix_cov(:, :, i), v);
+  mv_tstudent_out = mv_tstudent_out + mix_prob_out(i)*mvtpdf(g_grid_scale, mix_cov_out(:, :, i), v);
+  
+end
+mv_tstudent = mv_tstudent/prod(scale);
+mv_tstudent_out = mv_tstudent_out/prod(scale);
+mv_tstudent_grid = reshape(mv_tstudent, size(x_grid));
+mv_tstudent_grid_out = reshape(mv_tstudent_out, size(x_grid));
+
+[posterior_prob, posterior] = tstudentmm_posterior(train_set, mix_prob, mix_cov, mix_mean, v);
+[posterior_prob_out, posterior_out] = tstudentmm_posterior(train_set, mix_prob_out, mix_cov_out, mix_mean_out, v);
+
+figure(3)
+subplot(2, 1, 1)
+plot3(train_set(:, 1), train_set(:, 2), sum(posterior, 2),'.')
+hold on
+mesh(x_grid, y_grid, mv_tstudent_grid)
+title('Without outliers data')
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid on
+subplot(2, 1, 2)
+plot3(train_set_outlier(:, 1), train_set_outlier(:, 2), sum(posterior_out, 2),'.')
+hold on
+mesh(x_grid, y_grid, mv_tstudent_grid_out)
+title('With outliers data')
+xlim([-5 5])
+ylim([-5 5])
+view(-90, 90)
+grid on
+
+%% 
+close all
+##### SOURCE END #####
+--></body></html>

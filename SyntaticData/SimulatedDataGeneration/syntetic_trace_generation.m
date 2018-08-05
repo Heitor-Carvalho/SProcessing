@@ -84,7 +84,7 @@ xlim([0 tmax_plot])
 grid
 
 %% Second primary - First order multiples
-t0_p2 = 0.35;
+t0_p2 = 0.15;
 p2_amp = 0.3;
 p2_delta_time = t0_p2;
 p2_idx = round(t0_p2/dt);

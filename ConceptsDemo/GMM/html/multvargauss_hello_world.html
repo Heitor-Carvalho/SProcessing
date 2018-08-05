@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Line Clustering - Hello World</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-12-11"><meta name="DC.source" content="line_clustering_hello_world.m"><style type="text/css">
+      --><title>multvargauss_hello_world</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-08-05"><meta name="DC.source" content="multvargauss_hello_world.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,136 +66,67 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Line Clustering - Hello World</h1><pre class="codeinput">x = -2:0.1:4
-y1 = 2*x + 3;
-y2 = 4*x - 2;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Testing Multivariate gaussian function</a></li><li><a href="#2">Function start</a></li><li><a href="#3">Plotting results</a></li></ul></div><h2>Testing Multivariate gaussian function<a name="1"></a></h2><pre class="codeinput">clear <span class="string">all</span>
+close <span class="string">all</span>
 
-test_line1 = [x; y1];
-test_line2 = [x; y2];
+[x_grid, y_grid] = meshgrid(-5:0.1:5);
 
-test_points_noise1 = test_line1 + 0.2*randn(size(test_line1));
-test_points_noise2 = test_line2 + 0.2*randn(size(test_line2));
+g_grid = [x_grid(:), y_grid(:)];
+
+mu = [0, 0];
+cov = diag([1.5 0.5]);
+
+<span class="comment">% Initialization</span>
+x = g_grid;
+</pre><h2>Function start<a name="2"></a></h2><pre class="codeinput">prob = mvgauss(x, mu, cov);
+</pre><h2>Plotting results<a name="3"></a></h2><pre class="codeinput">prob_grid = reshape(prob, size(x_grid));
 
 figure(1)
-plot(test_line1(1, :), test_line1(2, :), test_line2(1, :), test_line2(2, :))
-title(<span class="string">'Testing reference lines'</span>)
-grid
+mesh(x_grid, y_grid, prob_grid)
+title(<span class="string">'Multivariate gaussian test'</span>)
+grid <span class="string">on</span>
 
-figure(2)
-plot(test_points_noise1(1, :), test_points_noise1(2, :), test_points_noise2(1, :), test_points_noise2(2, :))
-title(<span class="string">'Noisy reference lines'</span>)
-grid
+<span class="comment">% Checking for integral equal 1</span>
+trapz(-5:0.1:5, trapz(-5:0.1:5, prob_grid, 2), 1)
 </pre><pre class="codeoutput">
-x =
+ans =
 
-  Columns 1 through 7
+    1.0000
 
-   -2.0000   -1.9000   -1.8000   -1.7000   -1.6000   -1.5000   -1.4000
-
-  Columns 8 through 14
-
-   -1.3000   -1.2000   -1.1000   -1.0000   -0.9000   -0.8000   -0.7000
-
-  Columns 15 through 21
-
-   -0.6000   -0.5000   -0.4000   -0.3000   -0.2000   -0.1000         0
-
-  Columns 22 through 28
-
-    0.1000    0.2000    0.3000    0.4000    0.5000    0.6000    0.7000
-
-  Columns 29 through 35
-
-    0.8000    0.9000    1.0000    1.1000    1.2000    1.3000    1.4000
-
-  Columns 36 through 42
-
-    1.5000    1.6000    1.7000    1.8000    1.9000    2.0000    2.1000
-
-  Columns 43 through 49
-
-    2.2000    2.3000    2.4000    2.5000    2.6000    2.7000    2.8000
-
-  Columns 50 through 56
-
-    2.9000    3.0000    3.1000    3.2000    3.3000    3.4000    3.5000
-
-  Columns 57 through 61
-
-    3.6000    3.7000    3.8000    3.9000    4.0000
-
-</pre><img vspace="5" hspace="5" src="line_clustering_hello_world_01.png" alt=""> <img vspace="5" hspace="5" src="line_clustering_hello_world_02.png" alt=""> <pre class="codeinput"><span class="comment">% Initial lines</span>
-init_line1.point1 = [1; 2]
-init_line1.point2 = [0; 1]
-
-init_line2.point1 = [1; 2]
-init_line2.point2 = [0; -1]
-
-figure(3)
-plot(init_line1.point1, init_line1.point2, init_line2.point1, init_line2.point2)
-title(<span class="string">'Initial lines'</span>)
-grid
-</pre><pre class="codeoutput">
-init_line1 = 
-
-    point1: [2x1 double]
-    point2: [2x1 double]
-
-
-init_line1 = 
-
-    point1: [2x1 double]
-    point2: [2x1 double]
-
-
-init_line2 = 
-
-    point1: [2x1 double]
-    point2: [2x1 double]
-
-
-init_line2 = 
-
-    point1: [2x1 double]
-    point2: [2x1 double]
-
-</pre><img vspace="5" hspace="5" src="line_clustering_hello_world_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="multvargauss_hello_world_01.png" alt=""> <pre class="codeinput">close <span class="string">all</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%% Line Clustering - Hello World
+%% Testing Multivariate gaussian function
+clear all
+close all
 
-x = -2:0.1:4
-y1 = 2*x + 3;
-y2 = 4*x - 2;
+[x_grid, y_grid] = meshgrid(-5:0.1:5);
 
-test_line1 = [x; y1];
-test_line2 = [x; y2];
+g_grid = [x_grid(:), y_grid(:)];
 
-test_points_noise1 = test_line1 + 0.2*randn(size(test_line1));
-test_points_noise2 = test_line2 + 0.2*randn(size(test_line2));
+mu = [0, 0];
+cov = diag([1.5 0.5]);
+
+% Initialization
+x = g_grid;
+
+%% Function start
+
+prob = mvgauss(x, mu, cov);
+
+%% Plotting results
+
+prob_grid = reshape(prob, size(x_grid));
 
 figure(1)
-plot(test_line1(1, :), test_line1(2, :), test_line2(1, :), test_line2(2, :))
-title('Testing reference lines')
-grid
+mesh(x_grid, y_grid, prob_grid)
+title('Multivariate gaussian test')
+grid on
 
-figure(2)
-plot(test_points_noise1(1, :), test_points_noise1(2, :), test_points_noise2(1, :), test_points_noise2(2, :))
-title('Noisy reference lines')
-grid
+% Checking for integral equal 1
+trapz(-5:0.1:5, trapz(-5:0.1:5, prob_grid, 2), 1)
 
 %%
-
-% Initial lines
-init_line1.point1 = [1; 2]
-init_line1.point2 = [0; 1]
-
-init_line2.point1 = [1; 2]
-init_line2.point2 = [0; -1]
-
-figure(3)
-plot(init_line1.point1, init_line1.point2, init_line2.point1, init_line2.point2)
-title('Initial lines')
-grid
-
+close all
 ##### SOURCE END #####
 --></body></html>

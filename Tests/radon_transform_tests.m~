@@ -1,0 +1,38 @@
+%% Loading data
+
+addpath('../Tests');
+addpath('../ThirdParty/SeismicLab/codes/radon_transforms/')
+addpath('../ThirdParty/SegyMAT/')
+
+%%
+addpath('../../../IA353/NeuralNetwork/')
+addpath('../../../IA353/ExtremeLearningMachine/')
+addpath('../../../IA353/EchoStateNetworks/')
+addpath('../../../IA353/Regularization/')
+
+%% Vertical line
+
+
+line_angle = zeros(10, 1); 
+line_amp = linspace(0, 1, 10);
+
+angles = (0:10:180)*pi/180;
+lines_number = length(angles);
+
+lines_angle = repmat(line_angle, 1, lines_number) + repmat(angles, length(line_angle), 1);
+lines_amp 
+% [amp_base, angle_base] = cart2pol(x,y);
+
+
+
+
+% amps = repmat(amp_base, length(rotation), 1);
+% angles = repmat(angle_base, length(rotation), 1) + repmat(rotation', 1, length(angle_base));
+
+polar(line(:, 1), line(:, 2))
+% xlim([0 100])
+
+% s = ones(size(i));
+
+% matrix = sparse(i, j, s)
+
