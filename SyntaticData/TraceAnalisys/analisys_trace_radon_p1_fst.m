@@ -1,19 +1,20 @@
 %% Loading data
 
 addpath('../../Tests');
+addpath('../../../IA353/Regularization/')
 addpath('../../../IA353/NeuralNetwork/')
 addpath('../../../IA353/ExtremeLearningMachine/')
 addpath('../../../IA353/Regularization/')
 
-load('CaseData1_0/tracos_in_radon');
-load('CaseData1_0/parameter');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025//tracos_in_radon');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025//parameter');
 
 %% Case One primary and multiples - Zero offset
 
 % Ploting filtered trace and reference trace
 
 time = 0:dt:tmax;
-trace_nb = 31;
+trace_nb = 22;
 attenuation_factor = 1;
 samples_start = 1;
 
@@ -71,8 +72,8 @@ grid
 
 %% ELM 
 
-prediction_step = 86;
-filter_one_len = 25;   
+prediction_step = 100;
+filter_one_len = 5;   
 mid_layer_sz = 56;
 regularization = 0;
 initial_weigths_amp = 0.1;
@@ -121,8 +122,8 @@ grid
 
 %% ESN
 
-prediction_step = 85;
-filter_one_len = 10;   
+prediction_step = 98;
+filter_one_len = 5;   
 mid_layer_sz = 56;
 regularization = 1e-8;
 initial_weigths_amp = 0.1;
@@ -158,8 +159,6 @@ figure(10)
 plot(time, target, 'r--')
 hold on
 plot(time, target - predicted_trace,'b')
-% title('ESN')
-% legend('Primaries and multiples', 'Primary recovered', 'Reference trace (Only primaries)')
 ylabel('Normalized Amplitude')
 xlabel('\tau [s]')
 xlim([0 time(1000)])

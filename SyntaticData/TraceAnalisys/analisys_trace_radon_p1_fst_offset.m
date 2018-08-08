@@ -6,8 +6,8 @@ addpath('../../../IA353/ExtremeLearningMachine/')
 addpath('../../../IA353/EchoStateNetworks/')
 addpath('../../../IA353/Regularization/')
 
-load('CaseData1_0/tracos_in_radon');
-load('CaseData1_0/parameter');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025//tracos_in_radon');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025//parameter');
 
 %% Case One primary and multiples - Non Zero offset
 
@@ -21,7 +21,7 @@ time = 0:dt:tmax;
 traces_matrix = radon_p1_fst_mul_div_offset;
 traces_matrix_prim = radon_p1_fst_prim_div_offset;
 
-trace_nb = 31;
+trace_nb = 22;
 
 % Nomalizing data
 test_trace = trace_pre_processing(traces_matrix, trace_nb, samples_start, attenuation_factor);
@@ -62,8 +62,8 @@ figure(3)
 plot(time, target, '--r')
 hold on
 plot(time, target - gain'*train_matrix, 'b')
-% title('FIR - Filter')
-% legend('Primaries and multiples', 'Primary recovered')
+title('FIR - Filter')
+legend('Primaries and multiples', 'Primary recovered')
 ylabel('Normalized Amplitude')
 xlabel('\tau [s]')
 xlim([0 time(1000)])
@@ -146,8 +146,8 @@ figure(6)
 plot(time, target, '--r')
 hold on
 plot(time, target - predicted_trace, 'b')
-% title('ELM')
-% legend('Primaries and multiples', 'Primary recovered')
+title('ELM')
+legend('Primaries and multiples', 'Primary recovered')
 ylabel('Normalized Amplitude')
 xlabel('\tau [s]')
 xlim([0 time(1000)])

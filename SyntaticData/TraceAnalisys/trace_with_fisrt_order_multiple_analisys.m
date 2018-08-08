@@ -2,8 +2,8 @@
 
 addpath('../../Tests');
 
-load('CaseData1_0/tracos_in_time_ideal');
-load('CaseData1_0/parameter');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025//tracos_in_time_ideal.mat');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025//parameter');
 
 %% Case 2.0 One primary and multiples
 
@@ -86,7 +86,7 @@ grid
 trace_1_noisy = trace_1 + 0.02*randn(size(trace_1));
 
 % First, lets look the noise trace
-figure(5)
+figure(6)
 plot(time, trace_1_noisy)
 grid
 
@@ -95,12 +95,12 @@ filter_one_len = 1;
 
 gain_noisy = inv(train_matrix_noisy*train_matrix_noisy')*train_matrix_noisy*target_noisy'
 
-figure(6)
+figure(7)
 plot(train_matrix_noisy, target_noisy,'.', train_matrix_noisy, train_matrix_noisy*gain_noisy)
 legend('Function to be approximated', 'FIR with one delay aproximation')
 grid
 
-figure(7)
+figure(8)
 plot(time, target_noisy, time, target_noisy - train_matrix_noisy*gain_noisy, '--')
 legend('Trace with primaries and multiples', 'Primary recovered')
 xlim([0 1.5])
@@ -117,7 +117,7 @@ grid
 noisy_trace_target_energy = target_noisy.^2;
 
 % Plotting energy time curve
-figure(5)
+figure(9)
 plot(time, noisy_trace_target_energy)
 legend('Trace energy')
 grid
@@ -129,18 +129,97 @@ removed_idx = mod(noisy_trace_target_energy < energy_threshold, 2);
 
 gain_noisy_less_points = inv(train_matrix_noisy(~removed_idx)*train_matrix_noisy(~removed_idx)')*train_matrix_noisy(~removed_idx)*target_noisy(~removed_idx)'
 
-figure(8)
+figure(10)
 plot(train_matrix_noisy(~removed_idx), target_noisy(~removed_idx),'.', train_matrix_noisy(~removed_idx), train_matrix_noisy(~removed_idx)*gain_noisy)
 legend('Function to be mapped points', 'FIR with one delay aproximation')
 grid
 
-figure(9)
+figure(11)
 plot(time, target_noisy, time, target_noisy - train_matrix_noisy*gain_noisy_less_points, '--')
 legend('Trace with primaries and multiples', 'Primary recovered')
 xlim([0 1.5])
 grid
 
 % As can be seen, there was some improvment !!
+
+%% GMM - Initing with fisrt primary
+rng(1);
+end_process = 801;
+
+filter_one_len = 1;
+prediction_step = 100;
+
+[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
+
+data_set = [train_matrix; target]';
+data_set(end_process:end, :) = [];
+
+init_gues = 2*ones(size(data_set,1), 1);
+init_gues(300:400) = 1;
+init_gues(setxor(300:400, 1:length(init_gues))) = 2;
+
+gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-3);
+
+figure(12)
+h = ezcontour(@(x,y)pdf(gm,[x y]),[-1 1],[-1 1], 400);
+hold on
+plot(train_matrix(1:end_process), target(1:end_process),'.')
+grid
+
+posterior = gm.posterior(data_set);
+
+figure(13)
+plot(target(1:800))
+hold on
+plot(posterior(:, 1))
+legend('Trace', 'Probability of been a primary')
+grid
+
+figure(14)
+plot(target(1:800))
+hold on
+plot(posterior(:, 2))
+legend('Trace', 'Probability of been a multiple')
+grid
+
+%% GMM - Initing randomly with bad guessing
+rng(5);
+end_process = 801;
+
+filter_one_len = 1;
+prediction_step = 100;
+
+[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
+
+data_set = [train_matrix; target]';
+data_set(end_process:end, :) = [];
+
+init_gues = 2*ones(size(data_set,1), 1);
+init_gues(randi(end_process, 1, 400)) = 1;
+
+gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-3);
+
+figure(12)
+h = ezcontour(@(x,y)pdf(gm,[x y]),[-1 1],[-1 1], 400);
+hold on
+plot(train_matrix(1:end_process), target(1:end_process),'.')
+grid
+
+posterior = gm.posterior(data_set);
+
+figure(13)
+plot(target(1:800))
+hold on
+plot(posterior(:, 1))
+legend('Trace', 'Probability of been a primary')
+grid
+
+figure(14)
+plot(target(1:800))
+hold on
+plot(posterior(:, 2))
+legend('Trace', 'Probability of been a multiple')
+grid
 
 %%
 close all
