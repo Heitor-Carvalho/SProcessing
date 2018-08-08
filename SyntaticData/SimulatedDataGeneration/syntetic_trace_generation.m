@@ -36,15 +36,6 @@ multiple_idx = round(multiple_delta_times/dt)+1;
 multiple_time_response = zeros(size(time));
 multiple_time_response(multiple_idx) = multiple_amp;
 
-figure(1)
-plot(time, multiple_time_response)
-title('Multiple response in time')
-xlabel('Time[s]')
-ylim([-1 1])
-xlim([0 tmax_plot])
-grid
-
-
 %% First primary - Fist order multiples
 t0_p1 = 0.1;
 p1_amp = 1;
@@ -67,24 +58,8 @@ p1_fst_mult_amp(1) = [];
 p1_fst_mult_delta_times(1) = [];
 p1_fst_mult_idx(1) = [];
 
-figure(2)
-plot(time, p1_time_response)
-title('First primary response')
-xlabel('Time[s]')
-ylim([-1 1])
-xlim([0 tmax_plot])
-grid
-
-figure(3)
-plot(time, p1_fst_mult_time_response)
-title('First order multiples')
-xlabel('Time[s]')
-ylim([-1 1])
-xlim([0 tmax_plot])
-grid
-
 %% Second primary - First order multiples
-t0_p2 = 0.15;
+t0_p2 = 0.1;
 p2_amp = 0.3;
 p2_delta_time = t0_p2;
 p2_idx = round(t0_p2/dt);
@@ -105,22 +80,6 @@ p2_fst_mult_amp(1) = [];
 p2_fst_mult_delta_times(1) = [];
 p2_fst_mult_idx(1) = [];
 
-figure(4)
-plot(time, p2_time_response)
-title('Second primary response')
-xlabel('Time[s]')
-ylim([-1 1])
-xlim([0 tmax_plot])
-grid
-
-figure(5)
-plot(time, p2_fst_mult_time_response)
-title('First order multiples')
-xlabel('Time[s]')
-ylim([-1 1])
-xlim([0 tmax_plot])
-grid
-
 %% Second order multiples - second primary
 p2_sec_mult_time_response = conv(conv(p2_time_response, multiple_time_response), multiple_time_response);
 p2_sec_mult_time_response = p2_sec_mult_time_response(1:max_idx);
@@ -134,14 +93,6 @@ p2_sec_mult_time_response(p2_sec_mult_idx(1)) = 0;
 p2_sec_mult_amp(1) = [];
 p2_sec_mult_delta_times(1) = [];
 p2_sec_mult_idx(1) = [];
-
-figure(6)
-plot(time, p2_sec_mult_time_response)
-title('Second order multiples')
-xlabel('Time[s]')
-ylim([-1 1])
-xlim([0 tmax_plot])
-grid
 
 %% All traces generations
 hyperbolic_resumed = @(tau, velocity, amp) hyperbolic_events(dt, f, tmax, h, tau, velocity, amp, SNR, 1);
@@ -200,12 +151,6 @@ trace_p2_sec_multiples_div_time = spheric_divergence(time, offsets, v2(1), trace
 %% All traces - Cases
 
 % Case 1 - Only P1
-figure(7)
-wiggle(trace_p1_fst_primaries)
-title('Primaries 1')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 2 - P1 and fisrt order multiples
 trace_p1_fst_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples;
@@ -214,20 +159,8 @@ trace_p1_fst_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_mult
 trace_p1_fst_prim_multiples_time = trace_p1_fst_primaries_time + trace_p1_fst_multiples_time;
 trace_p1_fst_prim_multiples_div_time = trace_p1_fst_primaries_div_time + trace_p1_fst_multiples_div_time;
 
-figure(8)
-wiggle(trace_p1_fst_prim_multiples)
-title('Primaries 1 and fisrt order multiples')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 3 - Only P2
-figure(9)
-wiggle(trace_p2_fst_primaries)
-title('Primaries 2')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 4 - P2 and fisrt order multiples
 trace_p2_fst_prim_multiples = trace_p2_fst_primaries + trace_p2_fst_multiples;
@@ -236,26 +169,12 @@ trace_p2_fst_prim_multiples_div = trace_p2_fst_primaries_div + trace_p2_fst_mult
 trace_p2_fst_prim_multiples_time = trace_p2_fst_primaries_time + trace_p2_fst_multiples_time;
 trace_p2_fst_prim_multiples_div_time = trace_p2_fst_primaries_div_time + trace_p2_fst_multiples_div_time;
 
-figure(10)
-wiggle(trace_p2_fst_prim_multiples)
-title('Primaries 2 and fisrt order multiples')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 5 - P1 and P2 fisrt order multiples
 trace_p1p2_fst_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples + trace_p2_fst_primaries + trace_p2_fst_multiples;
 trace_p1p2_fst_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div + trace_p2_fst_primaries_div + trace_p2_fst_multiples_div;
 
 trace_p1p2_fst_prim_multiples_time = trace_p1_fst_primaries_time + trace_p1_fst_multiples_time + trace_p2_fst_primaries_time + trace_p2_fst_multiples_time;
 trace_p1p2_fst_prim_multiples_div_time = trace_p1_fst_primaries_div_time + trace_p1_fst_multiples_div_time + trace_p2_fst_primaries_div_time + trace_p2_fst_multiples_div_time;
-
-figure(11)
-wiggle(trace_p1p2_fst_prim_multiples)
-title('Primaries 1, 2 and fisrt order multiples')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 6 - P2 second order multiples
 trace_p2_sec_prim_multiples = trace_p2_fst_primaries + trace_p2_sec_multiples;
@@ -264,13 +183,6 @@ trace_p2_sec_prim_multiples_div = trace_p2_fst_primaries_div + trace_p2_sec_mult
 trace_p2_sec_prim_multiples_time = trace_p2_fst_primaries_time + trace_p2_sec_multiples_time;
 trace_p2_sec_prim_multiples_div_time = trace_p2_fst_primaries_div_time + trace_p2_sec_multiples_div_time;
 
-figure(12)
-wiggle(trace_p2_fst_prim_multiples)
-title('Primaries 2 and second order multiples')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 7 - P1 and P2 second order multiples
 trace_p1p2_sec_prim_multiples = trace_p1_fst_primaries + trace_p1_fst_multiples + trace_p2_fst_primaries + trace_p2_sec_multiples;
 trace_p1p2_sec_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_multiples_div + trace_p2_fst_primaries_div + trace_p2_sec_multiples_div;
@@ -278,26 +190,12 @@ trace_p1p2_sec_prim_multiples_div = trace_p1_fst_primaries_div + trace_p1_fst_mu
 trace_p1p2_sec_prim_multiples_time = trace_p1_fst_primaries_time + trace_p1_fst_multiples_time + trace_p2_fst_primaries_time + trace_p2_sec_multiples_time;
 trace_p1p2_sec_prim_multiples_div_time = trace_p1_fst_primaries_div_time + trace_p1_fst_multiples_div_time + trace_p2_fst_primaries_div + trace_p2_sec_multiples_div_time;
 
-figure(13)
-wiggle(trace_p1p2_sec_prim_multiples)
-title('Primaries 1, 2 and second order multiples')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 8 - P1 and P2 only primaries
 trace_p1p2_fst_primaries = trace_p1_fst_primaries + trace_p2_fst_primaries;
 trace_p1p2_fst_primaries_div = trace_p1_fst_primaries_div + trace_p2_fst_primaries_div;
 
 trace_p1p2_fst_primaries_time = trace_p1_fst_primaries_time + trace_p2_fst_primaries_time;
 trace_p1p2_fst_primaries_div_time = trace_p1_fst_primaries_div_time + trace_p2_fst_primaries_div;
-
-figure(14)
-wiggle(trace_p1p2_fst_primaries)
-title('Primaries 1, 2 primaries')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 %% Traces in Radon domain
 flow = 3;
@@ -314,89 +212,33 @@ inverse_radon_freq_res = @(trace, h) inverse_radon_freq(trace, dt, h, q, radon_t
 radon_p1_fst_prim_div = inverse_radon_freq_res(trace_p1_fst_primaries_div, h);
 radon_p1_fst_prim_div_offset = inverse_radon_freq_res(trace_p1_fst_primaries_div(:, 31:end), h_ofsset150m);
 
-figure(15)
-wiggle(radon_p1_fst_prim_div)
-title('Primaries 1 - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 2 - P1 and fisrt order multiples
 radon_p1_fst_mul_div = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div, h);
 radon_p1_fst_mul_div_offset = inverse_radon_freq_res(trace_p1_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
-
-figure(16)
-wiggle(radon_p1_fst_mul_div)
-title('Primaries 1 and first order multiples - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 3 - Only P2
 radon_p2_fst_prim_div = inverse_radon_freq_res(trace_p2_fst_primaries_div, h);
 radon_p2_fst_prim_div_offset = inverse_radon_freq_res(trace_p2_fst_primaries_div(:, 31:end), h_ofsset150m);
 
-figure(17)
-wiggle(radon_p2_fst_prim_div)
-title('Primaries 2 - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 4 - P2 and fisrt order multiples
 radon_p2_fst_mul_div = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div, h);
 radon_p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p2_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
-
-figure(18)
-wiggle(radon_p2_fst_mul_div)
-title('Primaries 2 and fisrt order multiples - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 5 - P1 and P2 fisrt order multiples
 radon_p1p2_fst_mul_div = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div, h);
 radon_p1p2_fst_mul_div_offset = inverse_radon_freq_res(trace_p1p2_fst_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(19)
-wiggle(radon_p1p2_fst_mul_div)
-title('P1 and P2 fisrt order multiples - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 6 - P2 second order multiples
 radon_p2_sec_mul_div = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div, h);
 radon_p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p2_sec_prim_multiples_div(:, 31:end), h_ofsset150m);
-
-figure(19)
-wiggle(radon_p2_sec_mul_div)
-title('P2 second order multiples - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 % Case 7 - P1 and P2 second order multiples
 radon_p1p2_sec_mul_div = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div, h);
 radon_p1p2_sec_mul_div_offset = inverse_radon_freq_res(trace_p1p2_sec_prim_multiples_div(:, 31:end), h_ofsset150m);
 
-figure(20)
-wiggle(radon_p1p2_sec_mul_div)
-title('P1 and P2 second order multiples - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
-
 % Case 8 - P1 and P2 primries
 radon_p1p2_primaries_div = inverse_radon_freq_res(trace_p1p2_fst_primaries_div, h);
 radon_p1p2_primaries_div_offset = inverse_radon_freq_res(trace_p1p2_fst_primaries_div(:, 31:end), h_ofsset150m);
-
-figure(21)
-wiggle(radon_p1p2_primaries_div)
-title('P1 and P2 primaries - Radon Domain')
-xlim([0 wiggle_xlimit])
-ylim([0 wiggle_ylimit])
-grid
 
 %% Saving data
 save('tracos_in_time', 'trace_p1_fst_primaries_div'       , 'trace_p1_fst_primaries'  , ...
