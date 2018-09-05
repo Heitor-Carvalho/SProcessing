@@ -107,7 +107,7 @@ xlim([0 1.5])
 grid
 
 % Now the noisy gain is not exactly 0.6 and we can see a cloud of points around
-% the zero in the graph. 
+% the zero in the graph.
 
 %% Removing points with low energy
 
@@ -144,6 +144,7 @@ grid
 
 %% GMM - Initing with fisrt primary
 rng(1);
+
 end_process = 801;
 
 filter_one_len = 1;
@@ -155,71 +156,107 @@ data_set = [train_matrix; target]';
 data_set(end_process:end, :) = [];
 
 init_gues = 2*ones(size(data_set,1), 1);
-init_gues(300:400) = 1;
-init_gues(setxor(300:400, 1:length(init_gues))) = 2;
+init_gues(200:400) = 1;
 
-gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-3);
+gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-6);
 
-figure(12)
-h = ezcontour(@(x,y)pdf(gm,[x y]),[-1 1],[-1 1], 400);
+figure(10)
+h = ezcontour(@(x,y)pdf(gm,[x y]), [-1 1], [-1 1], 500);
 hold on
 plot(train_matrix(1:end_process), target(1:end_process),'.')
 grid
 
 posterior = gm.posterior(data_set);
 
-figure(13)
+figure(11)
 plot(target(1:800))
 hold on
 plot(posterior(:, 1))
 legend('Trace', 'Probability of been a primary')
 grid
 
-figure(14)
+figure(12)
 plot(target(1:800))
 hold on
 plot(posterior(:, 2))
 legend('Trace', 'Probability of been a multiple')
 grid
 
-%% GMM - Initing randomly with bad guessing
-rng(5);
+%% DataSet PCA
+
+pca_scaling = -1:0.1:1;
+
+[princomp] = pca(data_set);
+p1 = kron(princomp(:,1), range)';
+p2 = kron(princomp(:,2), range)';
+
+figure(12)
+plot(data_set(:, 1), data_set(:, 2))
+hold on
+plot(p1(:, 1), p1(:, 2))
+plot(p2(:, 1), p2(:, 2))
+legend('DataSet', 'Principal component 1', 'Principal component 2')
+grid
+
+%% Rotate principal components using promax criteria
+% This allows to find not orthogonal components, which
+% we hope results in more usefull components for our case
+
+[rotate_promax, tpromax] = rotatefactors(data_set, 'Method', 'promax');
+var(rotate_promax, 1)/min(var(rotate_promax, 1))
+
+figure(13)
+plot(data_set(:, 1), data_set(:, 2))
+hold on
+plot(rotate_promax(:, 1), rotate_promax(:, 2))
+legend('DataSet', 'Rotate data')
+grid
+
+%% GMM - Initing clusters with component of more energy
+rng(1);
+
+% Normalizing trace
+trace_1_norm = trace_normalization(trace_1);
+trace_1_norm = trace_1_norm/max(trace_1_norm);
+[train_matrix, target] = trace_to_datatraining(trace_1_norm, filter_one_len, prediction_step);
+
 end_process = 801;
-
-filter_one_len = 1;
-prediction_step = 100;
-
-[train_matrix, target] = trace_to_datatraining(trace_1, filter_one_len, prediction_step);
+low_energy_idx = abs(target(1:end_process-1).^2) < 1e-3;
 
 data_set = [train_matrix; target]';
 data_set(end_process:end, :) = [];
 
+
+idx_component_1 = rotate_promax(:, 1) < rotate_promax(:, 2);
+idx_component_2 = rotate_promax(:, 2) <= rotate_promax(:, 1);
+
 init_gues = 2*ones(size(data_set,1), 1);
-init_gues(randi(end_process, 1, 400)) = 1;
+init_gues(idx_component_1) = 1;
 
-gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-3);
+gm = fitgmdist(data_set, 2, 'Start', init_gues, 'RegularizationValue', 1e-6);
 
-figure(12)
-h = ezcontour(@(x,y)pdf(gm,[x y]),[-1 1],[-1 1], 400);
+figure(10)
+h = ezcontour(@(x,y)pdf(gm,[x y]), [-1 1], [-1 1], 500);
 hold on
 plot(train_matrix(1:end_process), target(1:end_process),'.')
 grid
 
 posterior = gm.posterior(data_set);
 
-figure(13)
+figure(11)
 plot(target(1:800))
 hold on
 plot(posterior(:, 1))
 legend('Trace', 'Probability of been a primary')
 grid
 
-figure(14)
+figure(12)
 plot(target(1:800))
 hold on
 plot(posterior(:, 2))
 legend('Trace', 'Probability of been a multiple')
 grid
+
 
 %%
 close all
