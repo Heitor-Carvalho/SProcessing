@@ -3,12 +3,13 @@
 addpath('../../Tests');
 addpath('../../Tests/RLS')
 addpath('../../../IA353/NeuralNetwork/')
+addpath('../../../IA353/ExtremeLearningMachine/')
 addpath('../../../IA353/EchoStateNetworks/')
 addpath('../../../IA353/Regularization/')
 addpath('../../Tests/GMM')
 
-load('CaseData1_0/tracos_in_radon');
-load('CaseData1_0/parameter');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025/tracos_in_radon');
+load('../../SyntaticData/SimulatedDataGeneration/SynData_025/parameter');
 
 %% Case two primary and multiples - Zero offset
 
@@ -94,7 +95,7 @@ grid
 
 prediction_step = 99;
 filter_one_len = 10;   
-mid_layer_sz = 35;
+mid_layer_sz = 55;
 regularization = 0;
 initial_weigths_amp = 0.1;
 
@@ -110,7 +111,7 @@ nn.b = 0;
 % Calculating extreme learning machines values
 nn.v = initial_weigths_amp*(rand(in_sz+1, mid_layer_sz));
 nn = neuro_net_init(nn);
-nn.w = calc_elm_weigths(train_set, target, regularization, nn)';
+[nn.w, H] = calc_elm_weigths(train_set, target, regularization, nn)';
 
 % Neural network prediction
 predicted_trace = neural_nete(train_set, nn);
